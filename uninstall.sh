@@ -1,11 +1,23 @@
 #!/usr/bin/env bash
 set -e
 
-SKILLS=("branch" "commit" "pr")
-CLAUDE_SKILLS=("branch" "commit" "pr")
+SKILLS=("branch" "commit" "pr" "humanize-korean")
+CLAUDE_SKILLS=("branch" "commit" "pr" "humanize-korean")
 
 CODEX_DIR="${HOME}/.codex/skills"
 CLAUDE_SKILLS_DIR="${HOME}/.claude/skills"
+CLAUDE_MANIFEST="${HOME}/.claude/.git-workflow-kit-humanize-files"
+CLAUDE_HUMANIZE_FALLBACK_FILES=(
+  "agents/ai-tell-detector.md"
+  "agents/content-fidelity-auditor.md"
+  "agents/humanize-monolith.md"
+  "agents/humanize-web-architect.md"
+  "agents/korean-ai-tell-taxonomist.md"
+  "agents/korean-style-rewriter.md"
+  "agents/naturalness-reviewer.md"
+  "commands/humanize.md"
+  "commands/humanize-redo.md"
+)
 
 REMOVE_CODEX=1
 REMOVE_CLAUDE=1
@@ -64,7 +76,33 @@ remove_claude_skills() {
   done
 }
 
-echo "🧹 ai-dev-skills 제거 시작"
+remove_claude_humanize_files() {
+  local relative_path
+
+  if [ -f "$CLAUDE_MANIFEST" ]; then
+    while IFS= read -r relative_path; do
+      if [ -n "$relative_path" ]; then
+        local target="${HOME}/.claude/${relative_path}"
+        if [ -f "$target" ]; then
+          echo "🗑 removing $target"
+          rm -f "$target"
+        fi
+      fi
+    done < "$CLAUDE_MANIFEST"
+    rm -f "$CLAUDE_MANIFEST"
+    return
+  fi
+
+  for relative_path in "${CLAUDE_HUMANIZE_FALLBACK_FILES[@]}"; do
+    local target="${HOME}/.claude/${relative_path}"
+    if [ -f "$target" ]; then
+      echo "🗑 removing $target"
+      rm -f "$target"
+    fi
+  done
+}
+
+echo "🧹 git-workflow-kit 제거 시작"
 
 if [ "$REMOVE_CODEX" -eq 1 ]; then
   echo ""
@@ -76,6 +114,7 @@ if [ "$REMOVE_CLAUDE" -eq 1 ]; then
   echo ""
   echo "📦 Claude skills 제거: ${CLAUDE_SKILLS_DIR}"
   remove_claude_skills "$CLAUDE_SKILLS_DIR" "${CLAUDE_SKILLS[@]}"
+  remove_claude_humanize_files
 fi
 
 echo ""
