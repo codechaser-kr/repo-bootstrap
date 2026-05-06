@@ -154,7 +154,7 @@ copy_managed_files() {
 
   mkdir -p "$target_dir"
 
-  for source_file in "$source_dir"/*; do
+  for source_file in "$source_dir"/* "$source_dir"/.[!.]* "$source_dir"/..?*; do
     if [ -f "$source_file" ]; then
       file_name="$(basename "$source_file")"
       cp "$source_file" "${target_dir}/${file_name}"
