@@ -10,11 +10,21 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SKILLS=("branch" "commit" "pr")
 CLAUDE_SKILLS=("branch" "commit" "pr")
 
+CODEX_HUMANIZE_REPO="Squirbie/im-not-ai-codex"
+CODEX_HUMANIZE_BRANCH="main"
+CLAUDE_HUMANIZE_REPO="epoko77-ai/im-not-ai"
+CLAUDE_HUMANIZE_BRANCH="main"
+
 CODEX_DIR="${HOME}/.codex/skills"
 CLAUDE_SKILLS_DIR="${HOME}/.claude/skills"
+CLAUDE_AGENTS_DIR="${HOME}/.claude/agents"
+CLAUDE_COMMANDS_DIR="${HOME}/.claude/commands"
+CLAUDE_MANIFEST="${HOME}/.claude/.git-workflow-kit-humanize-files"
 
 INSTALL_CODEX=1
 INSTALL_CLAUDE=1
+TMP_DIR=""
+FETCHED_REPO_DIR=""
 
 # ===== 옵션 처리 =====
 for arg in "$@"; do
@@ -45,6 +55,42 @@ download() {
   fi
 }
 
+require_command() {
+  local name="$1"
+
+  if ! command -v "$name" >/dev/null 2>&1; then
+    echo "❌ ${name} 명령이 필요합니다."
+    exit 1
+  fi
+}
+
+prepare_tmp_dir() {
+  if [ -z "$TMP_DIR" ]; then
+    TMP_DIR="$(mktemp -d)"
+    trap 'rm -rf "$TMP_DIR"' EXIT
+  fi
+}
+
+fetch_repo_archive() {
+  local repo="$1"
+  local branch="$2"
+  local name="$3"
+  local archive_path
+  local extract_dir
+
+  require_command tar
+  prepare_tmp_dir
+
+  archive_path="${TMP_DIR}/${name}.tar.gz"
+  extract_dir="${TMP_DIR}/${name}"
+
+  mkdir -p "$extract_dir"
+  download "https://github.com/${repo}/archive/refs/heads/${branch}.tar.gz" "$archive_path"
+  tar -xzf "$archive_path" -C "$extract_dir" --strip-components=1
+
+  FETCHED_REPO_DIR="$extract_dir"
+}
+
 install_file() {
   local source_path="$1"
   local dest="$2"
@@ -57,15 +103,72 @@ install_file() {
   fi
 }
 
+install_local_skill_dir() {
+  local target_dir="$1"
+  local source_root="$2"
+  local name="$3"
+  local skill_dir="${target_dir}/${name}"
+
+  mkdir -p "$skill_dir"
+  echo "→ 설치 중: ${name} → ${skill_dir}/SKILL.md"
+  install_file "${source_root}/${name}/SKILL.md" "${skill_dir}/SKILL.md"
+}
+
+replace_dir() {
+  local source_dir="$1"
+  local target_dir="$2"
+
+  if [ ! -d "$source_dir" ]; then
+    echo "❌ 소스 디렉터리를 찾을 수 없습니다: ${source_dir}"
+    exit 1
+  fi
+
+  rm -rf "$target_dir"
+  mkdir -p "$(dirname "$target_dir")"
+  cp -R "$source_dir" "$target_dir"
+}
+
+remove_manifest_entries() {
+  if [ ! -f "$CLAUDE_MANIFEST" ]; then
+    return
+  fi
+
+  while IFS= read -r relative_path; do
+    if [ -n "$relative_path" ]; then
+      rm -f "${HOME}/.claude/${relative_path}"
+    fi
+  done < "$CLAUDE_MANIFEST"
+}
+
+copy_managed_files() {
+  local source_dir="$1"
+  local target_dir="$2"
+  local manifest_prefix="$3"
+  local manifest_tmp="$4"
+  local source_file
+  local file_name
+
+  if [ ! -d "$source_dir" ]; then
+    return
+  fi
+
+  mkdir -p "$target_dir"
+
+  for source_file in "$source_dir"/* "$source_dir"/.[!.]* "$source_dir"/..?*; do
+    if [ -f "$source_file" ]; then
+      file_name="$(basename "$source_file")"
+      cp "$source_file" "${target_dir}/${file_name}"
+      echo "${manifest_prefix}/${file_name}" >> "$manifest_tmp"
+    fi
+  done
+}
+
 install_codex_skills() {
   local target_dir="$1"
   shift
 
   for name in "$@"; do
-    local skill_dir="${target_dir}/${name}"
-    mkdir -p "$skill_dir"
-    echo "→ installing ${name} → ${skill_dir}/SKILL.md"
-    install_file "codex-skills/${name}/SKILL.md" "${skill_dir}/SKILL.md"
+    install_local_skill_dir "$target_dir" "codex-skills" "$name"
   done
 }
 
@@ -74,11 +177,35 @@ install_claude_skills() {
   shift
 
   for name in "$@"; do
-    local skill_dir="${target_dir}/${name}"
-    mkdir -p "$skill_dir"
-    echo "→ installing ${name} → ${skill_dir}/SKILL.md"
-    install_file "claude-skills/${name}/SKILL.md" "${skill_dir}/SKILL.md"
+    install_local_skill_dir "$target_dir" "claude-skills" "$name"
   done
+}
+
+install_codex_humanize_korean() {
+  local repo_dir
+
+  echo "→ humanize-korean 설치 중: ${CODEX_HUMANIZE_REPO}@${CODEX_HUMANIZE_BRANCH}"
+  fetch_repo_archive "$CODEX_HUMANIZE_REPO" "$CODEX_HUMANIZE_BRANCH" "codex-humanize"
+  repo_dir="$FETCHED_REPO_DIR"
+  replace_dir "${repo_dir}/skills/humanize-korean" "${CODEX_DIR}/humanize-korean"
+}
+
+install_claude_humanize_korean() {
+  local repo_dir
+  local manifest_tmp
+
+  echo "→ humanize-korean 설치 중: ${CLAUDE_HUMANIZE_REPO}@${CLAUDE_HUMANIZE_BRANCH}"
+  fetch_repo_archive "$CLAUDE_HUMANIZE_REPO" "$CLAUDE_HUMANIZE_BRANCH" "claude-humanize"
+  repo_dir="$FETCHED_REPO_DIR"
+  replace_dir "${repo_dir}/.claude/skills/humanize-korean" "${CLAUDE_SKILLS_DIR}/humanize-korean"
+
+  remove_manifest_entries
+  manifest_tmp="${TMP_DIR}/claude-humanize-files.txt"
+  : > "$manifest_tmp"
+  copy_managed_files "${repo_dir}/.claude/agents" "$CLAUDE_AGENTS_DIR" "agents" "$manifest_tmp"
+  copy_managed_files "${repo_dir}/.claude/commands" "$CLAUDE_COMMANDS_DIR" "commands" "$manifest_tmp"
+  mkdir -p "$(dirname "$CLAUDE_MANIFEST")"
+  cp "$manifest_tmp" "$CLAUDE_MANIFEST"
 }
 
 # ===== 실행 =====
@@ -87,14 +214,16 @@ echo "🚀 git-workflow-kit 설치 시작"
 
 if [ "$INSTALL_CODEX" -eq 1 ]; then
   echo ""
-  echo "📦 Codex skills 설치: ${CODEX_DIR}"
+  echo "📦 Codex 스킬 설치: ${CODEX_DIR}"
   install_codex_skills "$CODEX_DIR" "${SKILLS[@]}"
+  install_codex_humanize_korean
 fi
 
 if [ "$INSTALL_CLAUDE" -eq 1 ]; then
   echo ""
-  echo "📦 Claude skills 설치: ${CLAUDE_SKILLS_DIR}"
+  echo "📦 Claude 스킬 설치: ${CLAUDE_SKILLS_DIR}"
   install_claude_skills "$CLAUDE_SKILLS_DIR" "${CLAUDE_SKILLS[@]}"
+  install_claude_humanize_korean
 fi
 
 echo ""
@@ -104,6 +233,10 @@ echo "👉 Claude에서:"
 echo "   /branch"
 echo "   /commit"
 echo "   /pr"
+echo "   /humanize"
+echo "   /humanize-redo"
+echo "   humanize-korean 또는 AI 티 없애줘"
 echo ""
 echo "👉 Codex에서:"
-echo "   skills 목록에서 사용 가능"
+echo "   스킬 목록에서 사용 가능"
+echo "   humanize-korean 또는 AI 티 없애줘"

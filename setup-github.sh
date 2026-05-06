@@ -41,7 +41,7 @@ install_file() {
 
 validate_target_paths() {
   if [ -e "$GITHUB_DIR" ] && [ ! -d "$GITHUB_DIR" ]; then
-    echo "❌ ${GITHUB_DIR} 가 디렉터리가 아닙니다."
+    echo "❌ 디렉터리가 아닙니다: ${GITHUB_DIR}"
     exit 1
   fi
 
@@ -51,12 +51,12 @@ validate_target_paths() {
   fi
 
   if [ -e "$ISSUE_TEMPLATE_DIR" ] && [ ! -d "$ISSUE_TEMPLATE_DIR" ]; then
-    echo "❌ ${ISSUE_TEMPLATE_DIR} 가 디렉터리가 아닙니다."
+    echo "❌ 디렉터리가 아닙니다: ${ISSUE_TEMPLATE_DIR}"
     exit 1
   fi
 
   if [ -d "$PR_TEMPLATE_PATH" ]; then
-    echo "❌ ${PR_TEMPLATE_PATH} 는 파일이어야 하는데 디렉터리입니다."
+    echo "❌ 파일이어야 하는데 디렉터리입니다: ${PR_TEMPLATE_PATH}"
     exit 1
   fi
 }
@@ -64,7 +64,7 @@ validate_target_paths() {
 # ===== 실행 =====
 
 if [ ! -d ".git" ]; then
-  echo "❌ Git 저장소가 아닙니다. 레포 루트에서 실행해주세요."
+  echo "❌ Git 저장소가 아닙니다. 저장소 루트에서 실행해주세요."
   exit 1
 fi
 
@@ -77,11 +77,11 @@ validate_target_paths
 mkdir -p "$ISSUE_TEMPLATE_DIR"
 
 for template in "${ISSUE_TEMPLATES[@]}"; do
-  echo "→ installing ${template}.md → ${ISSUE_TEMPLATE_DIR}"
+  echo "→ 설치 중: ${template}.md → ${ISSUE_TEMPLATE_DIR}"
   install_file ".github/ISSUE_TEMPLATE/${template}.md" "${ISSUE_TEMPLATE_DIR}/${template}.md"
 done
 
-echo "→ installing pull_request_template.md → ${PR_TEMPLATE_PATH}"
+echo "→ 설치 중: pull_request_template.md → ${PR_TEMPLATE_PATH}"
 install_file ".github/pull_request_template.md" "$PR_TEMPLATE_PATH"
 
 echo ""
@@ -92,6 +92,6 @@ echo "   - 기능 개발 제안 (feature_template.md)"
 echo "   - 기능 개선 제안 (improvement_template.md)"
 echo "   - 결함 해결 (fix_templatebug.md)"
 echo "👉 설치된 PR 템플릿:"
-echo "   - Pull Request 템플릿 (pull_request_template.md)"
+echo "   - PR 템플릿 (pull_request_template.md)"
 echo ""
-echo "💡 변경사항을 커밋하고 푸시하면 GitHub Issues에서 사용할 수 있습니다."
+echo "💡 변경사항을 커밋하고 푸시하면 GitHub 이슈에서 사용할 수 있습니다."
