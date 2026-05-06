@@ -110,7 +110,7 @@ install_local_skill_dir() {
   local skill_dir="${target_dir}/${name}"
 
   mkdir -p "$skill_dir"
-  echo "→ installing ${name} → ${skill_dir}/SKILL.md"
+  echo "→ 설치 중: ${name} → ${skill_dir}/SKILL.md"
   install_file "${source_root}/${name}/SKILL.md" "${skill_dir}/SKILL.md"
 }
 
@@ -119,7 +119,7 @@ replace_dir() {
   local target_dir="$2"
 
   if [ ! -d "$source_dir" ]; then
-    echo "❌ source directory not found: ${source_dir}"
+    echo "❌ 소스 디렉터리를 찾을 수 없습니다: ${source_dir}"
     exit 1
   fi
 
@@ -184,7 +184,7 @@ install_claude_skills() {
 install_codex_humanize_korean() {
   local repo_dir
 
-  echo "→ installing humanize-korean from ${CODEX_HUMANIZE_REPO}@${CODEX_HUMANIZE_BRANCH}"
+  echo "→ humanize-korean 설치 중: ${CODEX_HUMANIZE_REPO}@${CODEX_HUMANIZE_BRANCH}"
   fetch_repo_archive "$CODEX_HUMANIZE_REPO" "$CODEX_HUMANIZE_BRANCH" "codex-humanize"
   repo_dir="$FETCHED_REPO_DIR"
   replace_dir "${repo_dir}/skills/humanize-korean" "${CODEX_DIR}/humanize-korean"
@@ -194,7 +194,7 @@ install_claude_humanize_korean() {
   local repo_dir
   local manifest_tmp
 
-  echo "→ installing humanize-korean from ${CLAUDE_HUMANIZE_REPO}@${CLAUDE_HUMANIZE_BRANCH}"
+  echo "→ humanize-korean 설치 중: ${CLAUDE_HUMANIZE_REPO}@${CLAUDE_HUMANIZE_BRANCH}"
   fetch_repo_archive "$CLAUDE_HUMANIZE_REPO" "$CLAUDE_HUMANIZE_BRANCH" "claude-humanize"
   repo_dir="$FETCHED_REPO_DIR"
   replace_dir "${repo_dir}/.claude/skills/humanize-korean" "${CLAUDE_SKILLS_DIR}/humanize-korean"
@@ -214,14 +214,14 @@ echo "🚀 git-workflow-kit 설치 시작"
 
 if [ "$INSTALL_CODEX" -eq 1 ]; then
   echo ""
-  echo "📦 Codex skills 설치: ${CODEX_DIR}"
+  echo "📦 Codex 스킬 설치: ${CODEX_DIR}"
   install_codex_skills "$CODEX_DIR" "${SKILLS[@]}"
   install_codex_humanize_korean
 fi
 
 if [ "$INSTALL_CLAUDE" -eq 1 ]; then
   echo ""
-  echo "📦 Claude skills 설치: ${CLAUDE_SKILLS_DIR}"
+  echo "📦 Claude 스킬 설치: ${CLAUDE_SKILLS_DIR}"
   install_claude_skills "$CLAUDE_SKILLS_DIR" "${CLAUDE_SKILLS[@]}"
   install_claude_humanize_korean
 fi
@@ -238,5 +238,5 @@ echo "   /humanize-redo"
 echo "   humanize-korean 또는 AI 티 없애줘"
 echo ""
 echo "👉 Codex에서:"
-echo "   skills 목록에서 사용 가능"
+echo "   스킬 목록에서 사용 가능"
 echo "   humanize-korean 또는 AI 티 없애줘"

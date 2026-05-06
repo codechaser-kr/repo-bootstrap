@@ -41,17 +41,17 @@ remove_codex_skills() {
   shift
 
   if [ ! -d "$target_dir" ]; then
-    echo "⚠️  ${target_dir} 존재하지 않음 (skip)"
+    echo "⚠️  경로가 존재하지 않아 건너뜁니다: ${target_dir}"
     return
   fi
 
   for name in "$@"; do
     local skill_dir="${target_dir}/${name}"
     if [ -d "$skill_dir" ]; then
-      echo "🗑 removing $skill_dir"
+      echo "🗑 제거 중: $skill_dir"
       rm -rf "$skill_dir"
     else
-      echo "⚠️  $skill_dir 없음 (skip)"
+      echo "⚠️  대상이 없어 건너뜁니다: $skill_dir"
     fi
   done
 }
@@ -61,17 +61,17 @@ remove_claude_skills() {
   shift
 
   if [ ! -d "$target_dir" ]; then
-    echo "⚠️  ${target_dir} 존재하지 않음 (skip)"
+    echo "⚠️  경로가 존재하지 않아 건너뜁니다: ${target_dir}"
     return
   fi
 
   for name in "$@"; do
     local skill_dir="${target_dir}/${name}"
     if [ -d "$skill_dir" ]; then
-      echo "🗑 removing $skill_dir"
+      echo "🗑 제거 중: $skill_dir"
       rm -rf "$skill_dir"
     else
-      echo "⚠️  $skill_dir 없음 (skip)"
+      echo "⚠️  대상이 없어 건너뜁니다: $skill_dir"
     fi
   done
 }
@@ -84,7 +84,7 @@ remove_claude_humanize_files() {
       if [ -n "$relative_path" ]; then
         local target="${HOME}/.claude/${relative_path}"
         if [ -f "$target" ]; then
-          echo "🗑 removing $target"
+          echo "🗑 제거 중: $target"
           rm -f "$target"
         fi
       fi
@@ -96,7 +96,7 @@ remove_claude_humanize_files() {
   for relative_path in "${CLAUDE_HUMANIZE_FALLBACK_FILES[@]}"; do
     local target="${HOME}/.claude/${relative_path}"
     if [ -f "$target" ]; then
-      echo "🗑 removing $target"
+      echo "🗑 제거 중: $target"
       rm -f "$target"
     fi
   done
@@ -106,13 +106,13 @@ echo "🧹 git-workflow-kit 제거 시작"
 
 if [ "$REMOVE_CODEX" -eq 1 ]; then
   echo ""
-  echo "📦 Codex 제거: ${CODEX_DIR}"
+  echo "📦 Codex 스킬 제거: ${CODEX_DIR}"
   remove_codex_skills "$CODEX_DIR" "${SKILLS[@]}"
 fi
 
 if [ "$REMOVE_CLAUDE" -eq 1 ]; then
   echo ""
-  echo "📦 Claude skills 제거: ${CLAUDE_SKILLS_DIR}"
+  echo "📦 Claude 스킬 제거: ${CLAUDE_SKILLS_DIR}"
   remove_claude_skills "$CLAUDE_SKILLS_DIR" "${CLAUDE_SKILLS[@]}"
   remove_claude_humanize_files
 fi
