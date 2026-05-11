@@ -131,21 +131,29 @@ replace_dir() {
 find_skill_dir() {
   local repo_dir="$1"
   local skill_name="$2"
+  local repo_label="$3"
   local candidate
-
-  for candidate in \
-    "${repo_dir}/skills/${skill_name}" \
-    "${repo_dir}/plugins/im-not-ai/skills/${skill_name}" \
+  local candidates=(
+    "${repo_dir}/skills/${skill_name}"
+    "${repo_dir}/plugins/im-not-ai/skills/${skill_name}"
     "${repo_dir}/.claude/skills/${skill_name}"
-  do
+  )
+
+  for candidate in "${candidates[@]}"; do
     if [ -f "${candidate}/SKILL.md" ]; then
       echo "$candidate"
       return 0
     fi
   done
 
-  echo ""
-  return 0
+  echo "❌ ${skill_name} 소스 디렉터리를 찾을 수 없습니다." >&2
+  echo "   repo: ${repo_label}" >&2
+  echo "   추출 위치: ${repo_dir}" >&2
+  echo "   확인한 후보:" >&2
+  for candidate in "${candidates[@]}"; do
+    echo "   - ${candidate}" >&2
+  done
+  exit 1
 }
 
 remove_manifest_entries() {
@@ -208,7 +216,7 @@ install_codex_humanize_korean() {
   echo "→ humanize-korean 설치 중: ${CODEX_HUMANIZE_REPO}@${CODEX_HUMANIZE_BRANCH}"
   fetch_repo_archive "$CODEX_HUMANIZE_REPO" "$CODEX_HUMANIZE_BRANCH" "codex-humanize"
   repo_dir="$FETCHED_REPO_DIR"
-  source_dir="$(find_skill_dir "$repo_dir" "humanize-korean")"
+  source_dir="$(find_skill_dir "$repo_dir" "humanize-korean" "${CODEX_HUMANIZE_REPO}@${CODEX_HUMANIZE_BRANCH}")"
   replace_dir "$source_dir" "${CODEX_DIR}/humanize-korean"
 }
 
@@ -220,7 +228,7 @@ install_claude_humanize_korean() {
   echo "→ humanize-korean 설치 중: ${CLAUDE_HUMANIZE_REPO}@${CLAUDE_HUMANIZE_BRANCH}"
   fetch_repo_archive "$CLAUDE_HUMANIZE_REPO" "$CLAUDE_HUMANIZE_BRANCH" "claude-humanize"
   repo_dir="$FETCHED_REPO_DIR"
-  source_dir="$(find_skill_dir "$repo_dir" "humanize-korean")"
+  source_dir="$(find_skill_dir "$repo_dir" "humanize-korean" "${CLAUDE_HUMANIZE_REPO}@${CLAUDE_HUMANIZE_BRANCH}")"
   replace_dir "$source_dir" "${CLAUDE_SKILLS_DIR}/humanize-korean"
 
   remove_manifest_entries
