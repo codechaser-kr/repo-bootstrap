@@ -128,6 +128,34 @@ replace_dir() {
   cp -R "$source_dir" "$target_dir"
 }
 
+find_skill_dir() {
+  local repo_dir="$1"
+  local skill_name="$2"
+  local repo_label="$3"
+  local candidate
+  local candidates=(
+    "${repo_dir}/skills/${skill_name}"
+    "${repo_dir}/plugins/im-not-ai/skills/${skill_name}"
+    "${repo_dir}/.claude/skills/${skill_name}"
+  )
+
+  for candidate in "${candidates[@]}"; do
+    if [ -f "${candidate}/SKILL.md" ]; then
+      echo "$candidate"
+      return 0
+    fi
+  done
+
+  echo "❌ ${skill_name} 소스 디렉터리를 찾을 수 없습니다." >&2
+  echo "   repo: ${repo_label}" >&2
+  echo "   추출 위치: ${repo_dir}" >&2
+  echo "   확인한 후보:" >&2
+  for candidate in "${candidates[@]}"; do
+    echo "   - ${candidate}" >&2
+  done
+  return 1
+}
+
 remove_manifest_entries() {
   if [ ! -f "$CLAUDE_MANIFEST" ]; then
     return
@@ -183,21 +211,29 @@ install_claude_skills() {
 
 install_codex_humanize_korean() {
   local repo_dir
+  local source_dir
 
   echo "→ humanize-korean 설치 중: ${CODEX_HUMANIZE_REPO}@${CODEX_HUMANIZE_BRANCH}"
   fetch_repo_archive "$CODEX_HUMANIZE_REPO" "$CODEX_HUMANIZE_BRANCH" "codex-humanize"
   repo_dir="$FETCHED_REPO_DIR"
-  replace_dir "${repo_dir}/skills/humanize-korean" "${CODEX_DIR}/humanize-korean"
+  if ! source_dir="$(find_skill_dir "$repo_dir" "humanize-korean" "${CODEX_HUMANIZE_REPO}@${CODEX_HUMANIZE_BRANCH}")"; then
+    exit 1
+  fi
+  replace_dir "$source_dir" "${CODEX_DIR}/humanize-korean"
 }
 
 install_claude_humanize_korean() {
   local repo_dir
   local manifest_tmp
+  local source_dir
 
   echo "→ humanize-korean 설치 중: ${CLAUDE_HUMANIZE_REPO}@${CLAUDE_HUMANIZE_BRANCH}"
   fetch_repo_archive "$CLAUDE_HUMANIZE_REPO" "$CLAUDE_HUMANIZE_BRANCH" "claude-humanize"
   repo_dir="$FETCHED_REPO_DIR"
-  replace_dir "${repo_dir}/.claude/skills/humanize-korean" "${CLAUDE_SKILLS_DIR}/humanize-korean"
+  if ! source_dir="$(find_skill_dir "$repo_dir" "humanize-korean" "${CLAUDE_HUMANIZE_REPO}@${CLAUDE_HUMANIZE_BRANCH}")"; then
+    exit 1
+  fi
+  replace_dir "$source_dir" "${CLAUDE_SKILLS_DIR}/humanize-korean"
 
   remove_manifest_entries
   manifest_tmp="${TMP_DIR}/claude-humanize-files.txt"
