@@ -128,6 +128,26 @@ replace_dir() {
   cp -R "$source_dir" "$target_dir"
 }
 
+find_skill_dir() {
+  local repo_dir="$1"
+  local skill_name="$2"
+  local candidate
+
+  for candidate in \
+    "${repo_dir}/skills/${skill_name}" \
+    "${repo_dir}/plugins/im-not-ai/skills/${skill_name}" \
+    "${repo_dir}/.claude/skills/${skill_name}"
+  do
+    if [ -f "${candidate}/SKILL.md" ]; then
+      echo "$candidate"
+      return 0
+    fi
+  done
+
+  echo ""
+  return 0
+}
+
 remove_manifest_entries() {
   if [ ! -f "$CLAUDE_MANIFEST" ]; then
     return
@@ -183,21 +203,25 @@ install_claude_skills() {
 
 install_codex_humanize_korean() {
   local repo_dir
+  local source_dir
 
   echo "→ humanize-korean 설치 중: ${CODEX_HUMANIZE_REPO}@${CODEX_HUMANIZE_BRANCH}"
   fetch_repo_archive "$CODEX_HUMANIZE_REPO" "$CODEX_HUMANIZE_BRANCH" "codex-humanize"
   repo_dir="$FETCHED_REPO_DIR"
-  replace_dir "${repo_dir}/skills/humanize-korean" "${CODEX_DIR}/humanize-korean"
+  source_dir="$(find_skill_dir "$repo_dir" "humanize-korean")"
+  replace_dir "$source_dir" "${CODEX_DIR}/humanize-korean"
 }
 
 install_claude_humanize_korean() {
   local repo_dir
   local manifest_tmp
+  local source_dir
 
   echo "→ humanize-korean 설치 중: ${CLAUDE_HUMANIZE_REPO}@${CLAUDE_HUMANIZE_BRANCH}"
   fetch_repo_archive "$CLAUDE_HUMANIZE_REPO" "$CLAUDE_HUMANIZE_BRANCH" "claude-humanize"
   repo_dir="$FETCHED_REPO_DIR"
-  replace_dir "${repo_dir}/.claude/skills/humanize-korean" "${CLAUDE_SKILLS_DIR}/humanize-korean"
+  source_dir="$(find_skill_dir "$repo_dir" "humanize-korean")"
+  replace_dir "$source_dir" "${CLAUDE_SKILLS_DIR}/humanize-korean"
 
   remove_manifest_entries
   manifest_tmp="${TMP_DIR}/claude-humanize-files.txt"
