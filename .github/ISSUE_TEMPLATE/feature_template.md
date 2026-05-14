@@ -1,9 +1,9 @@
 ---
 name: 기능 개발 제안
 about: 개발해야 할 기능에 대해서 작성해주세요.
-title: ''
-labels: 기능제안
-assignees: ''
+title: ""
+labels: 기능개발
+assignees: ""
 ---
 
 **어떤 기능을 개발하려 하나요?**
