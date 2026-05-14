@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-REPO="codechaser-kr/git-workflow-kit"
+REPO="codechaser-kr/repo-bootstrap"
 BRANCH="main"
 BASE_URL="https://raw.githubusercontent.com/${REPO}/${BRANCH}"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
