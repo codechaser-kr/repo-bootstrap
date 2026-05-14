@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -e
 
-SKILLS=("branch" "commit" "pr" "git-hooks" "humanize-korean")
-CLAUDE_SKILLS=("branch" "commit" "pr" "git-hooks" "humanize-korean")
+SKILLS=("branch" "commit" "pr" "git-hooks" "repo-bootstrap" "humanize-korean")
+CLAUDE_SKILLS=("branch" "commit" "pr" "git-hooks" "repo-bootstrap" "humanize-korean")
 
 CODEX_DIR="${HOME}/.codex/skills"
 CLAUDE_SKILLS_DIR="${HOME}/.claude/skills"
@@ -79,6 +79,7 @@ remove_claude_skills() {
 
 remove_claude_humanize_files() {
   local relative_path
+  local removed_from_manifest=0
 
   if [ -f "$CLAUDE_MANIFEST" ]; then
     while IFS= read -r relative_path; do
@@ -91,7 +92,7 @@ remove_claude_humanize_files() {
       fi
     done < "$CLAUDE_MANIFEST"
     rm -f "$CLAUDE_MANIFEST"
-    return
+    removed_from_manifest=1
   fi
 
   if [ -f "$CLAUDE_LEGACY_MANIFEST" ]; then
@@ -105,6 +106,10 @@ remove_claude_humanize_files() {
       fi
     done < "$CLAUDE_LEGACY_MANIFEST"
     rm -f "$CLAUDE_LEGACY_MANIFEST"
+    removed_from_manifest=1
+  fi
+
+  if [ "$removed_from_manifest" -eq 1 ]; then
     return
   fi
 

@@ -195,6 +195,8 @@ install_codex_skills() {
   local target_dir="$1"
   shift
 
+  rm -rf "${target_dir}/repo-bootstrap"
+
   for name in "$@"; do
     install_local_skill_dir "$target_dir" "codex-skills" "$name"
   done
@@ -203,6 +205,8 @@ install_codex_skills() {
 install_claude_skills() {
   local target_dir="$1"
   shift
+
+  rm -rf "${target_dir}/repo-bootstrap"
 
   for name in "$@"; do
     install_local_skill_dir "$target_dir" "claude-skills" "$name"
@@ -264,17 +268,23 @@ fi
 
 echo ""
 echo "✅ 설치 완료!"
-echo ""
-echo "👉 Claude에서:"
-echo "   현재 변경사항에 맞는 브랜치 이름 추천해줘"
-echo "   현재 변경사항에 맞는 커밋 메시지 추천해줘"
-echo "   현재 브랜치의 PR 제목과 설명 작성해줘"
-echo "   이 레포에 맞는 Git hook 만들어줘"
-echo "   이 글 AI 티 안 나게 자연스럽게 다듬어줘"
-echo ""
-echo "👉 Codex에서:"
-echo "   현재 변경사항에 맞는 브랜치 이름 추천해줘"
-echo "   현재 변경사항에 맞는 커밋 메시지 추천해줘"
-echo "   현재 브랜치의 PR 제목과 설명 작성해줘"
-echo "   이 레포에 맞는 Git hook 만들어줘"
-echo "   이 글 AI 티 안 나게 자연스럽게 다듬어줘"
+
+if [ "$INSTALL_CLAUDE" -eq 1 ]; then
+  echo ""
+  echo "👉 Claude에서:"
+  echo "   현재 변경사항에 맞는 브랜치 이름 추천해줘"
+  echo "   현재 변경사항에 맞는 커밋 메시지 추천해줘"
+  echo "   현재 브랜치의 PR 제목과 설명 작성해줘"
+  echo "   이 저장소에 맞는 Git 훅을 구성해줘"
+  echo "   이 글 AI 티 안 나게 자연스럽게 다듬어줘"
+fi
+
+if [ "$INSTALL_CODEX" -eq 1 ]; then
+  echo ""
+  echo "👉 Codex에서:"
+  echo "   현재 변경사항에 맞는 브랜치 이름 추천해줘"
+  echo "   현재 변경사항에 맞는 커밋 메시지 추천해줘"
+  echo "   현재 브랜치의 PR 제목과 설명 작성해줘"
+  echo "   이 저장소에 맞는 Git 훅을 구성해줘"
+  echo "   이 글 AI 티 안 나게 자연스럽게 다듬어줘"
+fi

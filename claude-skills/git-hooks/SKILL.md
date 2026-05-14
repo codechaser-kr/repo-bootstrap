@@ -1,55 +1,75 @@
 ---
-allowed-tools: Bash(git rev-parse:*), Bash(git config:*), Bash(git diff:*), Bash(git status:*), Bash(git ls-files:*), Bash(find:*), Bash(rg:*), Bash(sed:*), Bash(ls:*), Bash(chmod:*), Bash(mkdir:*), Bash(cp:*)
-description: 타겟 Git 저장소의 언어와 모노레포 구조를 분석해 pre-commit, pre-push, commit-msg 훅을 생성하거나 갱신합니다
+allowed-tools: Write, Bash(git rev-parse:*), Bash(git config:*), Bash(sed:*), Bash(ls:*), Bash(chmod:*), Bash(mkdir:*), Bash(cp:*), Bash(mv:*), Bash(sh:*), Bash(node:*), Bash(corepack:*), Bash(npm:*), Bash(yarn:*), Bash(pnpm:*), Bash(cargo:*), Bash(gradle:*), Bash(./gradlew:*)
+description: 사용자와 대화하며 대상 Git 저장소에 맞는 pre-commit, pre-push, commit-msg 훅을 설계하고 생성하거나 갱신합니다
 ---
 
-## Your task
+# Git Hook 구성
 
-타겟 저장소를 분석해 로컬 Git hook을 생성하거나 갱신하세요. 핵심 목표는 `pre-commit`은 빠른 staged 파일 검사, `pre-push`는 push 범위 기준의 더 무거운 검사를 수행하게 만드는 것입니다. `commit-msg`는 모든 프로젝트에서 동일한 Conventional Commits 검사 훅을 사용합니다.
+사용자와 대화하며 대상 Git 저장소에 맞는 로컬 Git 훅을 설계하고 생성하거나 갱신합니다.
 
-## Workflow
+핵심 정책:
 
-1. 저장소 루트를 확인합니다.
+- 특정 언어, 프레임워크, 패키지 관리 도구, 포맷터, 린터, 테스트 도구를 스킬에 고정하지 않습니다.
+- 구현 방식은 저장소 상황과 사용자 선택에 따라 정합니다.
+- `pre-commit`은 스테이징된 파일에 대해서만 빠르게 포맷터와 린트를 실행하도록 구성합니다.
+- `pre-push`는 푸시 대상 커밋들의 변경에 대해 린트, 타입 검사, 테스트를 실행해 정합성을 확인하도록 구성합니다.
+- `commit-msg`는 아래 `commit-msg 훅` 섹션의 스크립트 그대로 구성합니다.
+- `pre-commit`과 `pre-push`에 사용할 도구 후보는 저장소의 언어/프레임워크/프로젝트 관리 방식에 맞춰 제안하고, 사용자가 선택하게 합니다.
+- 필요한 정보나 사용자 선택이 부족하면 훅을 만들지 말고 필요한 질문을 한 뒤 멈춥니다.
+
+## 작업 절차
+
+1. 현재 상태 확인
    - `git rev-parse --show-toplevel`
    - `git config --get core.hooksPath`
    - `git rev-parse --git-path hooks`
-2. 기존 훅과 훅 프레임워크를 확인합니다.
-   - `.git/hooks/pre-commit`
-   - `.git/hooks/pre-push`
-   - `.git/hooks/commit-msg`
-   - `.husky/`, `.githooks/`, `lefthook.yml`, `.pre-commit-config.yaml`
-3. 프로젝트 구조를 분석합니다.
-   - 모노레포 여부: `workspaces`, `pnpm-workspace.yaml`, `turbo.json`, `nx.json`, 여러 `Cargo.toml`, 여러 Gradle 프로젝트, `apps/`, `packages/`
-   - 언어와 도구: `package.json`, `Cargo.toml`, `build.gradle(.kts)`, `gradlew`, `.swiftlint.yml`, `pubspec.yaml`, `go.mod`, `pyproject.toml`
-   - 기존 스크립트: `lint`, `format`, `typecheck`, `test`, `clippy`, `ktlint`, `swiftlint`
-4. 훅 정책을 결정합니다.
-   - `pre-commit`: staged 파일에 해당하는 빠른 포맷/린트만 실행
-   - `pre-push`: push 대상 commit들의 변경 파일에 해당하는 lint/typecheck/test를 실행
-   - 포맷터가 파일을 수정하면 자동 stage 하지 말고 실패 처리해 사용자가 검토 후 다시 stage 하게 함
-5. 훅을 설치합니다.
+   - 기존 hook 파일은 백업/덮어쓰기 판단에 필요한 범위에서 확인
+2. 대화로 필요한 정보 확인
+   - 저장소의 언어/프레임워크
+   - 프로젝트 관리 방식과 명령 실행 방식
+   - 현재 설치된 포맷터, 린터, 타입 검사, 테스트 도구
+   - 사용자가 원하는 훅 강도와 실행 비용
+3. 도구 후보 제안
+   - 저장소 상황에 맞는 후보를 역할별로 제안
+   - 각 후보의 장단점과 훅에서 사용할 위치를 간단히 설명
+   - 사용자가 선택하기 전에는 도구 설치나 훅 생성을 진행하지 않음
+4. 실행 계획 합의
+   - `pre-commit`에서 실행할 명령과 대상 파일 범위 제시
+   - `pre-push`에서 실행할 명령과 대상 변경 범위 제시
+   - 기존 훅 백업 방식 제시
+   - 사용자가 승인하지 않으면 작업을 진행하지 않음
+5. 도구 준비
+   - 선택한 도구가 없거나 실행 명령이 불명확하면 설치/설정/대안 중 가능한 선택지를 제시
+   - 사용자가 승인한 방식만 적용
+   - 설치나 설정이 실패하면 훅 생성을 중단하고 실패 원인을 보고
+6. 훅 작성
    - 기본은 Git 기본 hook 경로(`git rev-parse --git-path hooks`)에 직접 설치
-   - 기존 훅이 있으면 내용을 확인하고, 덮어쓰기 전 `.bak` 또는 timestamp 백업을 만든 뒤 진행
+   - 기존 훅이 있으면 덮어쓰기 전 `.bak` 또는 timestamp 백업을 만든 뒤 진행
    - 설치 후 `chmod +x` 적용
+   - `pre-commit`에서 포맷터가 파일을 수정한 경우 커밋을 중단하고, 사용자가 변경 내용을 확인한 뒤 다시 스테이징하게 함
 
-## Language policy
+## 훅 작성 원칙
 
-타겟 레포의 실제 스크립트와 설정을 우선합니다. 아래는 기본 후보입니다.
+- POSIX `sh`를 기본으로 사용합니다.
+- 훅 시작부에는 `set -eu`, `repo_root=$(git rev-parse --show-toplevel)`, `cd "$repo_root"`를 둡니다.
+- 훅에서는 사용자와 합의한 도구와 명령만 호출합니다.
+- 프로젝트의 기존 명령 실행 방식을 우선 사용합니다.
+- `pre-commit`은 `git diff --cached --name-only --diff-filter=ACMR`로 스테이징된 파일만 대상으로 삼습니다.
+- `pre-push`는 Git이 stdin으로 넘긴 ref 정보를 기준으로 푸시 대상 변경 파일을 계산합니다.
+- 파일 목록은 `while IFS= read -r file` 패턴으로 처리합니다.
 
-- JavaScript/TypeScript: `lint-staged`가 있으면 패키지 매니저에 맞춰 `yarn lint-staged`, `pnpm lint-staged`, `npx lint-staged`를 `pre-commit`에 사용합니다. `pre-push`는 변경 범위에 따라 `lint`, `typecheck`, 관련 테스트를 사용합니다.
-- Rust: `pre-commit`은 staged `.rs` 파일에 `rustfmt` 또는 `cargo fmt --check`, `pre-push`는 변경된 crate/workspace에 `cargo clippy --all-targets`와 필요한 테스트를 사용합니다.
-- Kotlin/Android: `pre-commit`은 staged `.kt`/`.kts` 파일이 있는 Gradle 프로젝트에서 `ktlintFormat`, `pre-push`는 `ktlintCheck`와 Android app의 `lintDebug` 같은 lint task를 사용합니다.
-- Swift/iOS: `pre-commit`은 staged `.swift` 파일만 대상으로 `swiftlint lint --strict --use-script-input-files` 또는 repo wrapper 스크립트를 실행하고, `pre-push`는 변경 범위에 Swift/iOS가 포함될 때 전체 lint를 실행합니다.
-- Flutter/Dart: `pre-commit`은 staged `.dart` 파일에 format/analyze, `pre-push`는 `flutter analyze`와 필요한 테스트를 사용합니다.
-- Go: `pre-commit`은 staged `.go` 파일에 `gofmt` 결과 검사, `pre-push`는 해당 모듈에서 `go test ./...`를 사용합니다.
-- Python: repo 설정에 따라 `ruff`, `black`, `pytest`를 사용합니다.
+## commit-msg 훅
 
-## Fixed commit-msg hook
-
-타겟 프로젝트와 관계없이 아래 내용을 사용합니다.
+대상 프로젝트와 관계없이 아래 내용을 그대로 사용합니다.
 
 ```sh
 #!/bin/sh
 set -eu
+
+if [ -z "${1:-}" ]; then
+  echo "[commit-msg] usage: commit-msg <message-file>" >&2
+  exit 1
+fi
 
 message_file=$1
 header=$(sed -n '1p' "$message_file")
@@ -87,20 +107,11 @@ case "$header" in
 esac
 ```
 
-## Hook authoring rules
+## 완료 전 확인
 
-- POSIX `sh`를 기본으로 사용합니다.
-- 훅 시작부에는 `set -eu`, `repo_root=$(git rev-parse --show-toplevel)`, `cd "$repo_root"`를 둡니다.
-- staged 파일은 `git diff --cached --name-only --diff-filter=ACMR`로 구합니다.
-- `pre-push`는 Git이 stdin으로 넘긴 ref 정보를 임시 파일에 저장한 뒤, remote에 없는 commit들의 변경 파일을 계산합니다.
-- 파일 목록 처리 시 `while IFS= read -r file` 패턴을 선호합니다.
-- 프로젝트 전역 명령이 너무 무거우면 변경된 package/app/crate/module에 한정합니다.
-- 도구가 없거나 설정이 불명확하면 훅에 추측 명령을 넣지 말고 사용자에게 확인합니다.
-- `.git/hooks`는 보통 버전관리되지 않으므로, 재사용이 필요하면 `scripts/install-hooks.sh`나 문서 업데이트도 제안합니다.
-
-## Final checks
-
-- `sh -n <hook-file>`
-- `ls -l <hook-file>`
-- 가능하면 staged 파일 감지 로직 확인
-- 최종 답변에는 감지한 언어/구조, 생성한 훅, 실행되는 명령, 백업 파일 위치를 간단히 보고합니다.
+- 생성된 각 훅의 문법 확인: `sh -n <hook-file>`
+- 생성된 각 훅의 실행 권한 확인: `ls -l <hook-file>`
+- `pre-commit`이 스테이징된 파일 목록을 사용하면 해당 목록 명령 확인
+- `pre-push`가 푸시 대상 변경 목록을 계산하면 해당 계산 명령 확인
+- 사용자와 합의한 도구 설치/설정 변경이 있으면 관련 설정 파일과 lockfile 변경 여부 확인
+- 최종 답변에는 합의한 도구, 생성한 훅, 실행 명령, 백업 파일 위치를 간단히 보고합니다.
