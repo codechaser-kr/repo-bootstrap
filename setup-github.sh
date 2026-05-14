@@ -6,7 +6,7 @@ BRANCH="main"
 BASE_URL="https://raw.githubusercontent.com/${REPO}/${BRANCH}"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-ISSUE_TEMPLATES=("feature_template" "fix_templatebug" "improvement_template")
+ISSUE_TEMPLATES=("feature_template" "fix_template" "improvement_template")
 
 GITHUB_DIR="./.github"
 ISSUE_TEMPLATE_DIR="./.github/ISSUE_TEMPLATE"
@@ -31,12 +31,17 @@ install_file() {
   local source_path="$1"
   local dest="$2"
   local local_file="${SCRIPT_DIR}/${source_path}"
+  local temp_file
 
-  if [ -f "$local_file" ]; then
-    cp "$local_file" "$dest"
+  temp_file="$(mktemp "${dest}.tmp.XXXXXX")"
+
+  if [ -f "$local_file" ] && { [ ! -e "$dest" ] || [ ! "$local_file" -ef "$dest" ]; }; then
+    cp -f "$local_file" "$temp_file"
   else
-    download "${BASE_URL}/${source_path}" "$dest"
+    download "${BASE_URL}/${source_path}" "$temp_file"
   fi
+
+  mv -f "$temp_file" "$dest"
 }
 
 validate_target_paths() {
@@ -90,7 +95,7 @@ echo ""
 echo "👉 설치된 이슈 템플릿:"
 echo "   - 기능 개발 제안 (feature_template.md)"
 echo "   - 기능 개선 제안 (improvement_template.md)"
-echo "   - 결함 해결 (fix_templatebug.md)"
+echo "   - 결함 해결 (fix_template.md)"
 echo "👉 설치된 PR 템플릿:"
 echo "   - PR 템플릿 (pull_request_template.md)"
 echo ""
