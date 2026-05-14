@@ -89,7 +89,7 @@ curl -fsSL https://raw.githubusercontent.com/codechaser-kr/repo-bootstrap/main/s
 
 - 기능 개발 제안 (`feature_template.md`)
 - 기능 개선 제안 (`improvement_template.md`)
-- 결함 해결 (`fix_templatebug.md`)
+- 결함 해결 (`fix_template.md`)
 - Pull Request 템플릿 (`pull_request_template.md`)
 
 ## 사용 방법
