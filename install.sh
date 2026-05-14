@@ -195,8 +195,6 @@ install_codex_skills() {
   local target_dir="$1"
   shift
 
-  rm -rf "${target_dir}/repo-bootstrap"
-
   for name in "$@"; do
     install_local_skill_dir "$target_dir" "codex-skills" "$name"
   done
@@ -205,8 +203,6 @@ install_codex_skills() {
 install_claude_skills() {
   local target_dir="$1"
   shift
-
-  rm -rf "${target_dir}/repo-bootstrap"
 
   for name in "$@"; do
     install_local_skill_dir "$target_dir" "claude-skills" "$name"

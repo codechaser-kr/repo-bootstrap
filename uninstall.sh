@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -e
 
-SKILLS=("branch" "commit" "pr" "git-hooks" "repo-bootstrap" "humanize-korean")
-CLAUDE_SKILLS=("branch" "commit" "pr" "git-hooks" "repo-bootstrap" "humanize-korean")
+SKILLS=("branch" "commit" "pr" "git-hooks" "humanize-korean")
+CLAUDE_SKILLS=("branch" "commit" "pr" "git-hooks" "humanize-korean")
 
 CODEX_DIR="${HOME}/.codex/skills"
 CLAUDE_SKILLS_DIR="${HOME}/.claude/skills"
