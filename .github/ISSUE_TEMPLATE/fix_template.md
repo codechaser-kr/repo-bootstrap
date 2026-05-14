@@ -1,9 +1,9 @@
 ---
 name: 결함 해결
 about: 수정되어야할 결함에 대해서 작성해주세요.
-title: ''
+title: ""
 labels: 버그
-assignees: ''
+assignees: ""
 ---
 
 **어떤 문제가 있나요?**
