@@ -2,13 +2,13 @@
 set -e
 
 # ===== 설정 =====
-REPO="codechaser-kr/git-workflow-kit"
+REPO="codechaser-kr/repo-bootstrap"
 BRANCH="main"
 BASE_URL="https://raw.githubusercontent.com/${REPO}/${BRANCH}"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-SKILLS=("branch" "commit" "pr")
-CLAUDE_SKILLS=("branch" "commit" "pr")
+SKILLS=("branch" "commit" "pr" "git-hooks")
+CLAUDE_SKILLS=("branch" "commit" "pr" "git-hooks")
 
 CODEX_HUMANIZE_REPO="Squirbie/im-not-ai-codex"
 CODEX_HUMANIZE_BRANCH="main"
@@ -19,7 +19,7 @@ CODEX_DIR="${HOME}/.codex/skills"
 CLAUDE_SKILLS_DIR="${HOME}/.claude/skills"
 CLAUDE_AGENTS_DIR="${HOME}/.claude/agents"
 CLAUDE_COMMANDS_DIR="${HOME}/.claude/commands"
-CLAUDE_MANIFEST="${HOME}/.claude/.git-workflow-kit-humanize-files"
+CLAUDE_MANIFEST="${HOME}/.claude/.repo-bootstrap-humanize-files"
 
 INSTALL_CODEX=1
 INSTALL_CLAUDE=1
@@ -246,7 +246,7 @@ install_claude_humanize_korean() {
 
 # ===== 실행 =====
 
-echo "🚀 git-workflow-kit 설치 시작"
+echo "🚀 repo-bootstrap 설치 시작"
 
 if [ "$INSTALL_CODEX" -eq 1 ]; then
   echo ""
@@ -266,13 +266,15 @@ echo ""
 echo "✅ 설치 완료!"
 echo ""
 echo "👉 Claude에서:"
-echo "   /branch"
-echo "   /commit"
-echo "   /pr"
-echo "   /humanize"
-echo "   /humanize-redo"
-echo "   humanize-korean 또는 AI 티 없애줘"
+echo "   현재 변경사항에 맞는 브랜치 이름 추천해줘"
+echo "   현재 변경사항에 맞는 커밋 메시지 추천해줘"
+echo "   현재 브랜치의 PR 제목과 설명 작성해줘"
+echo "   이 레포에 맞는 Git hook 만들어줘"
+echo "   이 글 AI 티 안 나게 자연스럽게 다듬어줘"
 echo ""
 echo "👉 Codex에서:"
-echo "   스킬 목록에서 사용 가능"
-echo "   humanize-korean 또는 AI 티 없애줘"
+echo "   현재 변경사항에 맞는 브랜치 이름 추천해줘"
+echo "   현재 변경사항에 맞는 커밋 메시지 추천해줘"
+echo "   현재 브랜치의 PR 제목과 설명 작성해줘"
+echo "   이 레포에 맞는 Git hook 만들어줘"
+echo "   이 글 AI 티 안 나게 자연스럽게 다듬어줘"
