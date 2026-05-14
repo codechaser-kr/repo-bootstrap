@@ -1,5 +1,5 @@
 ---
-allowed-tools: Write, Bash(git rev-parse:*), Bash(git config:*), Bash(sed:*), Bash(ls:*), Bash(chmod:*), Bash(mkdir:*), Bash(cp:*), Bash(mv:*), Bash(sh:*), Bash(node:*), Bash(corepack:*), Bash(npm:*), Bash(yarn:*), Bash(pnpm:*), Bash(cargo:*), Bash(gradle:*), Bash(./gradlew:*)
+allowed-tools: Read, Write, Bash(git rev-parse:*), Bash(git config:*), Bash(sed:*), Bash(ls:*), Bash(chmod:*), Bash(mkdir:*), Bash(cp:*), Bash(mv:*), Bash(sh:*), Bash(node:*), Bash(corepack:*), Bash(npm:*), Bash(yarn:*), Bash(pnpm:*), Bash(cargo:*), Bash(gradle:*), Bash(./gradlew:*)
 description: 사용자와 대화하며 대상 Git 저장소에 맞는 pre-commit, pre-push, commit-msg 훅을 설계하고 생성하거나 갱신합니다
 ---
 
