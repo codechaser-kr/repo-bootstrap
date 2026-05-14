@@ -1,9 +1,9 @@
 ---
 name: 기능 개선 제안
 about: 개선해야 할 기능에 대해서 작성해주세요.
-title: ''
-labels: 기능제안
-assignees: ''
+title: ""
+labels: 기능개선
+assignees: ""
 ---
 
 **어떤 기능을 개선하려 하나요?**
