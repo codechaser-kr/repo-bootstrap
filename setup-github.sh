@@ -79,6 +79,7 @@ upsert_managed_block() {
   local end_marker="$3"
   local block="$4"
   local temp_file
+  local block_file
   local has_start=0
   local has_end=0
 
@@ -108,11 +109,23 @@ upsert_managed_block() {
   fi
 
   if [ "$has_start" -eq 1 ]; then
-    awk -v start="$start_marker" -v end="$end_marker" -v block="$block" '
-      $0 == start { print block; skipping = 1; next }
+    block_file="$(mktemp "${dest}.block.tmp.XXXXXX")"
+    printf "%s\n" "$block" > "$block_file"
+
+    awk -v start="$start_marker" -v end="$end_marker" -v bf="$block_file" '
+      $0 == start {
+        while ((getline line < bf) > 0) {
+          print line
+        }
+        close(bf)
+        skipping = 1
+        next
+      }
       $0 == end { skipping = 0; next }
       !skipping { print }
     ' "$dest" > "$temp_file"
+
+    rm -f "$block_file"
   elif [ -s "$dest" ]; then
     cp "$dest" "$temp_file"
     printf "\n\n%s\n" "$block" >> "$temp_file"
