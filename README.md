@@ -2,7 +2,7 @@
 
 Codex와 Claude에서 공통으로 사용할 수 있는 저장소 초기 세팅용 로컬 툴킷입니다.
 
-브랜치명, 커밋 메시지, PR 설명처럼 반복해서 작성하는 Git 작업을 빠르게 처리할 수 있도록 Codex skills, Claude skills, GitHub 협업용 이슈 템플릿을 제공합니다. AI가 쓴 듯한 한글 문장을 자연스럽게 다듬는 `humanize-korean` 스킬도 Codex와 Claude 글로벌 경로에 설치할 수 있습니다.
+브랜치명, 커밋 메시지, PR 설명처럼 반복해서 작성하는 Git 작업을 빠르게 처리할 수 있도록 Codex skills, Claude skills, GitHub 협업용 이슈/PR 템플릿과 AI 리뷰 설정을 제공합니다. AI가 쓴 듯한 한글 문장을 자연스럽게 다듬는 `humanize-korean` 스킬도 Codex와 Claude 글로벌 경로에 설치할 수 있습니다.
 
 ## 포함 내용
 
@@ -19,11 +19,14 @@ Codex와 Claude에서 공통으로 사용할 수 있는 저장소 초기 세팅�
 - Codex: `Squirbie/im-not-ai-codex`의 `skills/humanize-korean`
 - Claude: `epoko77-ai/im-not-ai`의 `.claude/skills/humanize-korean`, `.claude/agents`, `.claude/commands`
 
-### GitHub 이슈 템플릿
+### GitHub 협업 설정
 
 - 기능 개발 제안
 - 기능 개선 제안
 - 결함 해결
+- Pull Request 템플릿
+- ChatGPT Codex Connector 리뷰 지침
+- Gemini Code Assist 리뷰 스타일 가이드
 
 ## 설치
 
@@ -73,24 +76,26 @@ curl -fsSL https://raw.githubusercontent.com/codechaser-kr/repo-bootstrap/main/i
 - `curl` 또는 `wget`
 - `tar`
 
-### GitHub 템플릿 설치 (`setup-github.sh`)
+### GitHub 템플릿 및 AI 리뷰 설정 설치 (`setup-github.sh`)
 
-**저장소별로** `.github/ISSUE_TEMPLATE/`의 이슈 템플릿과 `.github/pull_request_template.md`를 추가합니다. 템플릿을 적용할 저장소의 루트에서 실행하세요.
+**저장소별로** `.github/ISSUE_TEMPLATE/`의 이슈 템플릿, `.github/pull_request_template.md`, `AGENTS.md`, `.gemini/styleguide.md`를 추가합니다. 템플릿과 AI 리뷰 설정을 적용할 저장소의 루트에서 실행하세요.
 
-이 스크립트는 저장소에 포함된 `.github/ISSUE_TEMPLATE/*.md`와 `.github/pull_request_template.md`를 기준 파일로 삼아 그대로 복사합니다. `.github/workflows` 같은 다른 GitHub 설정 파일은 건드리지 않습니다.
+이 스크립트는 저장소에 포함된 `.github/ISSUE_TEMPLATE/*.md`와 `.github/pull_request_template.md`를 기준 파일로 삼아 그대로 복사합니다. ChatGPT Codex Connector와 Gemini Code Assist 리뷰 지침은 이 저장소의 `.github/apps/codex-code-review.md`, `.github/apps/gemini-code-review.md`를 원본으로 사용해 타겟 프로젝트의 `AGENTS.md`, `.gemini/styleguide.md`에 추가하거나 갱신합니다. 기존 파일 전체를 덮어쓰지 않고 `repo-bootstrap` 관리 블록만 다룹니다. `.github/workflows` 같은 다른 GitHub 설정 파일은 건드리지 않습니다.
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/codechaser-kr/repo-bootstrap/main/setup-github.sh | bash
 ```
 
-설치 후 변경사항을 커밋하고 푸시하면 GitHub Issues와 Pull Requests에서 템플릿을 사용할 수 있습니다.
+설치 후 변경사항을 커밋하고 푸시하면 GitHub Issues와 Pull Requests에서 템플릿을 사용할 수 있고, ChatGPT Codex Connector와 Gemini Code Assist 리뷰 앱이 한국어 리뷰 지침을 참고할 수 있습니다.
 
-**설치되는 템플릿:**
+**설치되는 파일:**
 
 - 기능 개발 제안 (`feature_template.md`)
 - 기능 개선 제안 (`improvement_template.md`)
 - 결함 해결 (`fix_template.md`)
 - Pull Request 템플릿 (`pull_request_template.md`)
+- ChatGPT Codex Connector 리뷰 지침 (`.github/apps/codex-code-review.md` 원본 → `AGENTS.md`)
+- Gemini Code Assist 리뷰 스타일 가이드 (`.github/apps/gemini-code-review.md` 원본 → `.gemini/styleguide.md`)
 
 ## 사용 방법
 
