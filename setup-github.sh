@@ -121,7 +121,14 @@ upsert_markdown_section() {
     exit 1
   fi
 
-  heading_level="$(printf "%s\n" "$heading" | awk 'match($0, /^#+/) { print RLENGTH }')"
+  heading_level="$(printf "%s\n" "$heading" | awk '
+    match($0, /^#+/) {
+      char = substr($0, RLENGTH + 1, 1)
+      if (char == "" || char == " " || char == sprintf("%c", 9)) {
+        print RLENGTH
+      }
+    }
+  ')"
   if [ -z "$heading_level" ]; then
     echo "❌ Markdown heading이 필요합니다: ${heading}"
     exit 1
@@ -136,6 +143,7 @@ upsert_markdown_section() {
     printf "%s\n" "$block" > "$block_file"
 
     awk -v heading="$heading" -v level="$heading_level" -v bf="$block_file" '
+      /^[[:space:]]*```/ { in_code = !in_code }
       function print_block() {
         while ((getline line < bf) > 0) {
           print line
@@ -147,13 +155,16 @@ upsert_markdown_section() {
         skipping = 1
         next
       }
-      skipping && match($0, /^#+/) {
-        current_level = RLENGTH
-        if (current_level <= level) {
-          skipping = 0
-          print
+      skipping && !in_code && match($0, /^#+/) {
+        char = substr($0, RLENGTH + 1, 1)
+        if (char == "" || char == " " || char == sprintf("%c", 9)) {
+          current_level = RLENGTH
+          if (current_level <= level) {
+            skipping = 0
+            print
+          }
+          next
         }
-        next
       }
       skipping { next }
       !skipping { print }
