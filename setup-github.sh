@@ -80,7 +80,7 @@ load_source_content() {
     return
   fi
 
-  temp_file="$(mktemp)"
+  temp_file="$(mktemp "${TMPDIR:-/tmp}/repo-bootstrap.tmp.XXXXXX")"
   register_temp_file "$temp_file"
   download "${BASE_URL}/${source_path}" "$temp_file"
   cat "$temp_file"
