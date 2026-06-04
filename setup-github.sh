@@ -87,6 +87,20 @@ load_source_content() {
   rm -f "$temp_file"
 }
 
+extract_markdown_heading() {
+  local content="$1"
+  local source_path="$2"
+  local heading
+
+  heading="$(printf "%s\n" "$content" | awk 'NR == 1 { print; exit }')"
+  if ! printf "%s\n" "$heading" | grep -Eq '^#+[[:space:]]+'; then
+    echo "❌ 소스 파일 첫 줄은 Markdown heading이어야 합니다: ${source_path}" >&2
+    exit 1
+  fi
+
+  printf "%s\n" "$heading"
+}
+
 upsert_markdown_section() {
   local dest="$1"
   local heading="$2"
@@ -157,13 +171,15 @@ upsert_markdown_section() {
 }
 
 install_ai_review_settings() {
-  local codex_heading="## ChatGPT Codex Connector 리뷰 지침"
-  local gemini_heading="# Gemini Code Assist 리뷰 스타일 가이드"
+  local codex_heading
+  local gemini_heading
   local codex_block
   local gemini_block
 
   codex_block="$(load_source_content "$CODEX_REVIEW_SOURCE_PATH")"
   gemini_block="$(load_source_content "$GEMINI_STYLEGUIDE_SOURCE_PATH")"
+  codex_heading="$(extract_markdown_heading "$codex_block" "$CODEX_REVIEW_SOURCE_PATH")"
+  gemini_heading="$(extract_markdown_heading "$gemini_block" "$GEMINI_STYLEGUIDE_SOURCE_PATH")"
 
   echo "→ 설치 중: ChatGPT Codex Connector 리뷰 지침 → ${AGENTS_PATH}"
   upsert_markdown_section "$AGENTS_PATH" "$codex_heading" "$codex_block"
