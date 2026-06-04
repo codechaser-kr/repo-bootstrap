@@ -141,6 +141,7 @@ upsert_markdown_section() {
         }
         next
       }
+      skipping { next }
       !skipping { print }
     ' "$dest" > "$temp_file"
 
