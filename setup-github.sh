@@ -16,8 +16,28 @@ GEMINI_DIR="./.gemini"
 GEMINI_STYLEGUIDE_PATH="./.gemini/styleguide.md"
 CODEX_REVIEW_SOURCE_PATH=".github/apps/codex-code-review.md"
 GEMINI_STYLEGUIDE_SOURCE_PATH=".github/apps/gemini-code-review.md"
+TEMP_FILES=()
 
 # ===== 유틸 =====
+register_temp_file() {
+  TEMP_FILES+=("$1")
+}
+
+cleanup_temp_files() {
+  local temp_file
+
+  for temp_file in "${TEMP_FILES[@]}"; do
+    if [ -n "$temp_file" ]; then
+      rm -f "$temp_file"
+    fi
+  done
+}
+
+trap cleanup_temp_files EXIT
+trap 'cleanup_temp_files; exit 129' HUP
+trap 'cleanup_temp_files; exit 130' INT
+trap 'cleanup_temp_files; exit 143' TERM
+
 download() {
   local url="$1"
   local dest="$2"
@@ -39,6 +59,7 @@ install_file() {
   local temp_file
 
   temp_file="$(mktemp "${dest}.tmp.XXXXXX")"
+  register_temp_file "$temp_file"
 
   if [ -f "$local_file" ] && { [ ! -e "$dest" ] || [ ! "$local_file" -ef "$dest" ]; }; then
     cp -f "$local_file" "$temp_file"
@@ -60,6 +81,7 @@ load_source_content() {
   fi
 
   temp_file="$(mktemp)"
+  register_temp_file "$temp_file"
   download "${BASE_URL}/${source_path}" "$temp_file"
   cat "$temp_file"
   rm -f "$temp_file"
@@ -88,12 +110,15 @@ upsert_managed_block() {
     exit 1
   fi
 
+  # Keep this guard even though validate_target_paths checks current callers.
+  # upsert_managed_block should remain safe if reused for other paths later.
   if [ -L "$dest" ]; then
     echo "❌ 심볼릭 링크 경로에는 설치하지 않습니다: ${dest}"
     exit 1
   fi
 
   temp_file="$(mktemp "${dest}.tmp.XXXXXX")"
+  register_temp_file "$temp_file"
 
   if [ -f "$dest" ] && grep -Fq "$start_marker" "$dest"; then
     has_start=1
@@ -110,6 +135,7 @@ upsert_managed_block() {
 
   if [ "$has_start" -eq 1 ]; then
     block_file="$(mktemp "${dest}.block.tmp.XXXXXX")"
+    register_temp_file "$block_file"
     printf "%s\n" "$block" > "$block_file"
 
     awk -v start="$start_marker" -v end="$end_marker" -v bf="$block_file" '
