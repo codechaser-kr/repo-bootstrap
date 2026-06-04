@@ -80,7 +80,7 @@ curl -fsSL https://raw.githubusercontent.com/codechaser-kr/repo-bootstrap/main/i
 
 **저장소별로** `.github/ISSUE_TEMPLATE/`의 이슈 템플릿, `.github/pull_request_template.md`, `AGENTS.md`, `.gemini/styleguide.md`를 추가합니다. 템플릿과 AI 리뷰 설정을 적용할 저장소의 루트에서 실행하세요.
 
-이 스크립트는 저장소에 포함된 `.github/ISSUE_TEMPLATE/*.md`와 `.github/pull_request_template.md`를 기준 파일로 삼아 그대로 복사합니다. ChatGPT Codex Connector와 Gemini Code Assist 리뷰 지침은 이 저장소의 `.github/apps/codex-code-review.md`, `.github/apps/gemini-code-review.md`를 원본으로 사용해 타겟 프로젝트의 `AGENTS.md`, `.gemini/styleguide.md`에 추가하거나 갱신합니다. 기존 파일 전체를 덮어쓰지 않고 `repo-bootstrap` 관리 블록만 다룹니다. `.github/workflows` 같은 다른 GitHub 설정 파일은 건드리지 않습니다.
+이 스크립트는 저장소에 포함된 `.github/ISSUE_TEMPLATE/*.md`와 `.github/pull_request_template.md`를 기준 파일로 삼아 그대로 복사합니다. ChatGPT Codex Connector와 Gemini Code Assist 리뷰 지침은 이 저장소의 `.github/apps/codex-code-review.md`, `.github/apps/gemini-code-review.md`를 원본으로 사용해 타겟 프로젝트의 `AGENTS.md`, `.gemini/styleguide.md`에 추가하거나 갱신합니다. 기존 파일 전체를 덮어쓰지 않고 리뷰 지침 섹션만 다룹니다. `.github/workflows` 같은 다른 GitHub 설정 파일은 건드리지 않습니다.
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/codechaser-kr/repo-bootstrap/main/setup-github.sh | bash

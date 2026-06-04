@@ -87,23 +87,13 @@ load_source_content() {
   rm -f "$temp_file"
 }
 
-wrap_managed_block() {
-  local start_marker="$1"
-  local end_marker="$2"
-  local content="$3"
-
-  printf "%s\n%s\n%s" "$start_marker" "$content" "$end_marker"
-}
-
-upsert_managed_block() {
+upsert_markdown_section() {
   local dest="$1"
-  local start_marker="$2"
-  local end_marker="$3"
-  local block="$4"
+  local heading="$2"
+  local block="$3"
   local temp_file
   local block_file
-  local has_start=0
-  local has_end=0
+  local heading_level
 
   if [ -e "$dest" ] && [ ! -f "$dest" ]; then
     echo "❌ 파일이어야 하는데 파일이 아닙니다: ${dest}"
@@ -111,43 +101,46 @@ upsert_managed_block() {
   fi
 
   # Keep this guard even though validate_target_paths checks current callers.
-  # upsert_managed_block should remain safe if reused for other paths later.
+  # upsert_markdown_section should remain safe if reused for other paths later.
   if [ -L "$dest" ]; then
     echo "❌ 심볼릭 링크 경로에는 설치하지 않습니다: ${dest}"
+    exit 1
+  fi
+
+  heading_level="$(printf "%s\n" "$heading" | awk 'match($0, /^#+/) { print RLENGTH }')"
+  if [ -z "$heading_level" ]; then
+    echo "❌ Markdown heading이 필요합니다: ${heading}"
     exit 1
   fi
 
   temp_file="$(mktemp "${dest}.tmp.XXXXXX")"
   register_temp_file "$temp_file"
 
-  if [ -f "$dest" ] && grep -Fq "$start_marker" "$dest"; then
-    has_start=1
-  fi
-
-  if [ -f "$dest" ] && grep -Fq "$end_marker" "$dest"; then
-    has_end=1
-  fi
-
-  if [ "$has_start" -ne "$has_end" ]; then
-    echo "❌ 관리 블록 마커가 불완전합니다: ${dest}"
-    exit 1
-  fi
-
-  if [ "$has_start" -eq 1 ]; then
+  if [ -f "$dest" ] && grep -Fxq "$heading" "$dest"; then
     block_file="$(mktemp "${dest}.block.tmp.XXXXXX")"
     register_temp_file "$block_file"
     printf "%s\n" "$block" > "$block_file"
 
-    awk -v start="$start_marker" -v end="$end_marker" -v bf="$block_file" '
-      $0 == start {
+    awk -v heading="$heading" -v level="$heading_level" -v bf="$block_file" '
+      function print_block() {
         while ((getline line < bf) > 0) {
           print line
         }
         close(bf)
+      }
+      $0 == heading {
+        print_block()
         skipping = 1
         next
       }
-      $0 == end { skipping = 0; next }
+      skipping && match($0, /^#+/) {
+        current_level = RLENGTH
+        if (current_level <= level) {
+          skipping = 0
+          print
+        }
+        next
+      }
       !skipping { print }
     ' "$dest" > "$temp_file"
 
@@ -163,22 +156,20 @@ upsert_managed_block() {
 }
 
 install_ai_review_settings() {
-  local codex_start="<!-- repo-bootstrap:codex-review:start -->"
-  local codex_end="<!-- repo-bootstrap:codex-review:end -->"
-  local gemini_start="<!-- repo-bootstrap:gemini-review:start -->"
-  local gemini_end="<!-- repo-bootstrap:gemini-review:end -->"
+  local codex_heading="## ChatGPT Codex Connector 리뷰 지침"
+  local gemini_heading="# Gemini Code Assist 리뷰 스타일 가이드"
   local codex_block
   local gemini_block
 
-  codex_block="$(wrap_managed_block "$codex_start" "$codex_end" "$(load_source_content "$CODEX_REVIEW_SOURCE_PATH")")"
-  gemini_block="$(wrap_managed_block "$gemini_start" "$gemini_end" "$(load_source_content "$GEMINI_STYLEGUIDE_SOURCE_PATH")")"
+  codex_block="$(load_source_content "$CODEX_REVIEW_SOURCE_PATH")"
+  gemini_block="$(load_source_content "$GEMINI_STYLEGUIDE_SOURCE_PATH")"
 
   echo "→ 설치 중: ChatGPT Codex Connector 리뷰 지침 → ${AGENTS_PATH}"
-  upsert_managed_block "$AGENTS_PATH" "$codex_start" "$codex_end" "$codex_block"
+  upsert_markdown_section "$AGENTS_PATH" "$codex_heading" "$codex_block"
 
   mkdir -p "$GEMINI_DIR"
   echo "→ 설치 중: Gemini Code Assist 리뷰 스타일 가이드 → ${GEMINI_STYLEGUIDE_PATH}"
-  upsert_managed_block "$GEMINI_STYLEGUIDE_PATH" "$gemini_start" "$gemini_end" "$gemini_block"
+  upsert_markdown_section "$GEMINI_STYLEGUIDE_PATH" "$gemini_heading" "$gemini_block"
 }
 
 validate_target_paths() {
