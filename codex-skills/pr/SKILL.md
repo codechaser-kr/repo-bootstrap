@@ -15,7 +15,7 @@ description: 현재 브랜치의 GitHub Pull Request 제목과 설명을 생성�
 4. `git diff main...HEAD`로 상세 변경사항 확인 (필요시)
 5. 연관 이슈 확인:
    - 브랜치명, 커밋 메시지, diff에서 `#123`, `issue-123`, `issues/123`, `GH-123` 같은 명시적 이슈 번호 확인
-   - 명시적 번호가 없으면 `gh issue list --state open --limit 50`으로 열린 이슈를 조회하고, PR 주제와 이슈 제목을 대조 (모호하면 `gh issue view <번호>`로 본문 확인)
+   - 명시적 번호가 없으면 `gh issue list --limit 50`으로 열린 이슈를 조회하고, PR 주제와 이슈 제목을 대조 (모호하면 `gh issue view <번호>`로 본문 확인)
 6. `git log -10 --oneline`으로 최근 커밋 스타일 참고
 
 ## PR 제목 형식
