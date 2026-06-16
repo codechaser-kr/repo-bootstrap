@@ -10,7 +10,7 @@ description: 현재 브랜치 기준으로 PR 제목과 설명을 제안합니�
 - Changed files since `main`: !`git diff main...HEAD --stat`
 - Detailed diff since `main`: !`git diff main...HEAD`
 - Recent commits: !`git log -10 --oneline`
-- Open issues: !`gh issue list --state open --limit 50 2>/dev/null || echo "(gh 미설치/미인증 또는 이슈 없음)"`
+- Related issue lookup: 명시적 이슈 번호가 없을 때만 `gh issue list --state open --limit 50`으로 열린 이슈를 조회합니다.
 
 ## Your task
 
@@ -74,7 +74,7 @@ Description 작성 가이드:
 4. 머지 전 확인사항은 체크리스트로 적습니다.
 5. 연관 이슈를 다음 순서로 확인합니다.
    - 먼저 브랜치명, 커밋 메시지, diff에서 `#123`, `issue-123`, `issues/123`, `GH-123` 같은 명시적 이슈 번호를 찾습니다.
-   - 명시적 번호가 없으면 위 `Open issues` 목록과 이 PR의 주제(제목·변경 파일·diff)를 대조해, 같은 기능/정책/버그를 다루는 이슈가 있는지 판단합니다. 제목만으로 모호하면 `gh issue view <번호>`로 본문을 확인합니다.
+   - 명시적 번호가 없으면 `gh issue list --state open --limit 50`으로 열린 이슈를 조회하고, 이 PR의 주제(제목·변경 파일·diff)와 대조해 같은 기능/정책/버그를 다루는 이슈가 있는지 판단합니다. 제목만으로 모호하면 `gh issue view <번호>`로 본문을 확인합니다.
 6. 주제가 분명히 일치하는 이슈가 있으면 `- Related: #이슈번호` 형식으로 적습니다. 단 `- Closes #이슈번호`는 이 PR이 이슈를 닫아야 한다는 명시가 있을 때만 사용합니다(추측으로 Closes를 쓰지 않습니다).
 7. 일치하는 이슈가 없거나 연관이 확실하지 않으면 `- N/A`를 유지합니다. 후보가 있으나 확신이 낮으면 사용자에게 확인을 제안합니다.
 
