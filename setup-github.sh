@@ -61,7 +61,7 @@ install_file() {
   temp_file="$(mktemp "${dest}.tmp.XXXXXX")"
   register_temp_file "$temp_file"
 
-  if [ -f "$local_file" ] && { [ ! -e "$dest" ] || [ ! "$local_file" -ef "$dest" ]; }; then
+  if [ -f "$local_file" ]; then
     cp -f "$local_file" "$temp_file"
   else
     download "${BASE_URL}/${source_path}" "$temp_file"
@@ -268,8 +268,8 @@ echo ""
 echo "✅ GitHub 템플릿 및 AI 리뷰 설정 설치 완료!"
 echo ""
 echo "👉 설치된 이슈 템플릿:"
-echo "   - 기능 개발 제안 (feature_template.md)"
-echo "   - 기능 개선 제안 (improvement_template.md)"
+echo "   - 기능 개발 (feature_template.md)"
+echo "   - 기능 개선 (improvement_template.md)"
 echo "   - 결함 해결 (fix_template.md)"
 echo "   - 정책 검토 (decision_template.md)"
 echo "👉 설치된 PR 템플릿:"
