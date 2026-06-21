@@ -6,7 +6,7 @@ BRANCH="main"
 BASE_URL="https://raw.githubusercontent.com/${REPO}/${BRANCH}"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-ISSUE_TEMPLATES=("feature_template" "fix_template" "improvement_template")
+ISSUE_TEMPLATES=("feature_template" "fix_template" "improvement_template" "decision_template")
 
 GITHUB_DIR="./.github"
 ISSUE_TEMPLATE_DIR="./.github/ISSUE_TEMPLATE"
@@ -271,6 +271,7 @@ echo "👉 설치된 이슈 템플릿:"
 echo "   - 기능 개발 제안 (feature_template.md)"
 echo "   - 기능 개선 제안 (improvement_template.md)"
 echo "   - 결함 해결 (fix_template.md)"
+echo "   - 정책 검토 (decision_template.md)"
 echo "👉 설치된 PR 템플릿:"
 echo "   - PR 템플릿 (pull_request_template.md)"
 echo "👉 설치된 AI 리뷰 설정:"
