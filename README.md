@@ -21,8 +21,8 @@ Codex와 Claude에서 공통으로 사용할 수 있는 저장소 초기 세팅�
 
 ### GitHub 협업 설정
 
-- 기능 개발 제안
-- 기능 개선 제안
+- 기능 개발
+- 기능 개선
 - 결함 해결
 - 정책 검토
 - Pull Request 템플릿
@@ -91,8 +91,8 @@ curl -fsSL https://raw.githubusercontent.com/codechaser-kr/repo-bootstrap/main/s
 
 **설치되는 파일:**
 
-- 기능 개발 제안 (`feature_template.md`)
-- 기능 개선 제안 (`improvement_template.md`)
+- 기능 개발 (`feature_template.md`)
+- 기능 개선 (`improvement_template.md`)
 - 결함 해결 (`fix_template.md`)
 - 정책 검토 (`decision_template.md`)
 - Pull Request 템플릿 (`pull_request_template.md`)

@@ -4,7 +4,12 @@ set -e
 REPO="codechaser-kr/repo-bootstrap"
 BRANCH="main"
 BASE_URL="https://raw.githubusercontent.com/${REPO}/${BRANCH}"
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_SOURCE="${BASH_SOURCE[0]:-}"
+SCRIPT_DIR=""
+
+if [ -n "$SCRIPT_SOURCE" ] && [ -f "$SCRIPT_SOURCE" ]; then
+  SCRIPT_DIR="$(cd "$(dirname "$SCRIPT_SOURCE")" && pwd)"
+fi
 
 ISSUE_TEMPLATES=("feature_template" "fix_template" "improvement_template" "decision_template")
 
@@ -55,13 +60,21 @@ download() {
 install_file() {
   local source_path="$1"
   local dest="$2"
-  local local_file="${SCRIPT_DIR}/${source_path}"
+  local local_file=""
   local temp_file
+
+  if [ -n "$SCRIPT_DIR" ]; then
+    local_file="${SCRIPT_DIR}/${source_path}"
+  fi
+
+  if [ -n "$local_file" ] && [ -f "$local_file" ] && [ -e "$dest" ] && [ "$local_file" -ef "$dest" ]; then
+    return 0
+  fi
 
   temp_file="$(mktemp "${dest}.tmp.XXXXXX")"
   register_temp_file "$temp_file"
 
-  if [ -f "$local_file" ] && { [ ! -e "$dest" ] || [ ! "$local_file" -ef "$dest" ]; }; then
+  if [ -n "$local_file" ] && [ -f "$local_file" ]; then
     cp -f "$local_file" "$temp_file"
   else
     download "${BASE_URL}/${source_path}" "$temp_file"
@@ -72,10 +85,14 @@ install_file() {
 
 load_source_content() {
   local source_path="$1"
-  local local_file="${SCRIPT_DIR}/${source_path}"
+  local local_file=""
   local temp_file
 
-  if [ -f "$local_file" ]; then
+  if [ -n "$SCRIPT_DIR" ]; then
+    local_file="${SCRIPT_DIR}/${source_path}"
+  fi
+
+  if [ -n "$local_file" ] && [ -f "$local_file" ]; then
     cat "$local_file"
     return
   fi
@@ -268,8 +285,8 @@ echo ""
 echo "✅ GitHub 템플릿 및 AI 리뷰 설정 설치 완료!"
 echo ""
 echo "👉 설치된 이슈 템플릿:"
-echo "   - 기능 개발 제안 (feature_template.md)"
-echo "   - 기능 개선 제안 (improvement_template.md)"
+echo "   - 기능 개발 (feature_template.md)"
+echo "   - 기능 개선 (improvement_template.md)"
 echo "   - 결함 해결 (fix_template.md)"
 echo "   - 정책 검토 (decision_template.md)"
 echo "👉 설치된 PR 템플릿:"
