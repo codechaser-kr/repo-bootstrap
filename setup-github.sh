@@ -58,6 +58,10 @@ install_file() {
   local local_file="${SCRIPT_DIR}/${source_path}"
   local temp_file
 
+  if [ -f "$local_file" ] && [ -e "$dest" ] && [ "$local_file" -ef "$dest" ]; then
+    return 0
+  fi
+
   temp_file="$(mktemp "${dest}.tmp.XXXXXX")"
   register_temp_file "$temp_file"
 
