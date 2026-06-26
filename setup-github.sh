@@ -11,7 +11,7 @@ if [ -n "$SCRIPT_SOURCE" ] && [ -f "$SCRIPT_SOURCE" ]; then
   SCRIPT_DIR="$(cd "$(dirname "$SCRIPT_SOURCE")" && pwd)"
 fi
 
-ISSUE_TEMPLATES=("feature_template" "fix_template" "improvement_template" "decision_template")
+ISSUE_TEMPLATES=("proposal_template" "feature_template" "fix_template" "decision_template")
 
 GITHUB_DIR="./.github"
 ISSUE_TEMPLATE_DIR="./.github/ISSUE_TEMPLATE"
@@ -285,9 +285,9 @@ echo ""
 echo "✅ GitHub 템플릿 및 AI 리뷰 설정 설치 완료!"
 echo ""
 echo "👉 설치된 이슈 템플릿:"
-echo "   - 기능 개발 (feature_template.md)"
-echo "   - 기능 개선 (improvement_template.md)"
-echo "   - 결함 해결 (fix_template.md)"
+echo "   - 기능 제안 (proposal_template.md)"
+echo "   - 기능 변경 (feature_template.md)"
+echo "   - 기능 결함 (fix_template.md)"
 echo "   - 정책 검토 (decision_template.md)"
 echo "👉 설치된 PR 템플릿:"
 echo "   - PR 템플릿 (pull_request_template.md)"

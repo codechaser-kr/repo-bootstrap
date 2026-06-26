@@ -21,9 +21,9 @@ Codex와 Claude에서 공통으로 사용할 수 있는 저장소 초기 세팅�
 
 ### GitHub 협업 설정
 
-- 기능 개발
-- 기능 개선
-- 결함 해결
+- 기능 제안
+- 기능 변경
+- 기능 결함
 - 정책 검토
 - Pull Request 템플릿
 - ChatGPT Codex Connector 리뷰 지침
@@ -91,9 +91,9 @@ curl -fsSL https://raw.githubusercontent.com/codechaser-kr/repo-bootstrap/main/s
 
 **설치되는 파일:**
 
-- 기능 개발 (`feature_template.md`)
-- 기능 개선 (`improvement_template.md`)
-- 결함 해결 (`fix_template.md`)
+- 기능 제안 (`proposal_template.md`)
+- 기능 변경 (`feature_template.md`)
+- 기능 결함 (`fix_template.md`)
 - 정책 검토 (`decision_template.md`)
 - Pull Request 템플릿 (`pull_request_template.md`)
 - ChatGPT Codex Connector 리뷰 지침 (`.github/apps/codex-code-review.md` 원본 → `AGENTS.md`)
