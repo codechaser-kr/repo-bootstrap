@@ -14,6 +14,10 @@ CODEX_HUMANIZE_REPO="Squirbie/im-not-ai-codex"
 CODEX_HUMANIZE_BRANCH="main"
 CLAUDE_HUMANIZE_REPO="epoko77-ai/im-not-ai"
 CLAUDE_HUMANIZE_BRANCH="main"
+CODE_REVIEW_REPO="awesome-skills/code-review-skill"
+CODE_REVIEW_BRANCH="main"
+CODE_REVIEW_UPSTREAM_SKILL_NAME="code-review-skill"
+CODE_REVIEW_SKILL_NAME="awesome-code-review"
 
 CODEX_DIR="${HOME}/.codex/skills"
 CLAUDE_SKILLS_DIR="${HOME}/.claude/skills"
@@ -25,6 +29,7 @@ INSTALL_CODEX=1
 INSTALL_CLAUDE=1
 TMP_DIR=""
 FETCHED_REPO_DIR=""
+CODE_REVIEW_SOURCE_DIR=""
 
 # ===== 옵션 처리 =====
 for arg in "$@"; do
@@ -128,6 +133,37 @@ replace_dir() {
   cp -R "$source_dir" "$target_dir"
 }
 
+rewrite_skill_name() {
+  local skill_dir="$1"
+  local new_name="$2"
+  local skill_file="${skill_dir}/SKILL.md"
+  local tmp_file="${skill_file}.tmp"
+
+  if [ ! -f "$skill_file" ]; then
+    echo "❌ SKILL.md를 찾을 수 없습니다: ${skill_file}"
+    exit 1
+  fi
+
+  if ! awk -v new_name="$new_name" '
+    BEGIN { in_frontmatter = 0; renamed = 0 }
+    NR == 1 && $0 == "---" { in_frontmatter = 1; print; next }
+    in_frontmatter && renamed == 0 && $0 ~ /^name:[[:space:]]*/ {
+      print "name: " new_name
+      renamed = 1
+      next
+    }
+    in_frontmatter && NR > 1 && $0 == "---" { in_frontmatter = 0 }
+    { print }
+    END { if (renamed == 0) exit 42 }
+  ' "$skill_file" > "$tmp_file"; then
+    rm -f "$tmp_file"
+    echo "❌ SKILL.md name 필드를 변경할 수 없습니다: ${skill_file}"
+    exit 1
+  fi
+
+  mv "$tmp_file" "$skill_file"
+}
+
 find_skill_dir() {
   local repo_dir="$1"
   local skill_name="$2"
@@ -146,6 +182,11 @@ find_skill_dir() {
     fi
   done
 
+  if [ -f "${repo_dir}/SKILL.md" ] && grep -Eq "^name:[[:space:]]*[\"']?${skill_name}[\"']?[[:space:]]*$" "${repo_dir}/SKILL.md"; then
+    echo "$repo_dir"
+    return 0
+  fi
+
   echo "❌ ${skill_name} 소스 디렉터리를 찾을 수 없습니다." >&2
   echo "   repo: ${repo_label}" >&2
   echo "   추출 위치: ${repo_dir}" >&2
@@ -153,6 +194,7 @@ find_skill_dir() {
   for candidate in "${candidates[@]}"; do
     echo "   - ${candidate}" >&2
   done
+  echo "   - ${repo_dir} (SKILL.md name이 ${skill_name}인 경우)" >&2
   return 1
 }
 
@@ -244,6 +286,38 @@ install_claude_humanize_korean() {
   cp "$manifest_tmp" "$CLAUDE_MANIFEST"
 }
 
+prepare_code_review_skill_source() {
+  local repo_dir
+  local source_dir
+
+  if [ -n "$CODE_REVIEW_SOURCE_DIR" ]; then
+    return
+  fi
+
+  echo "→ ${CODE_REVIEW_SKILL_NAME} 소스 다운로드 중: ${CODE_REVIEW_REPO}@${CODE_REVIEW_BRANCH}"
+  fetch_repo_archive "$CODE_REVIEW_REPO" "$CODE_REVIEW_BRANCH" "code-review-skill"
+  repo_dir="$FETCHED_REPO_DIR"
+  if ! source_dir="$(find_skill_dir "$repo_dir" "$CODE_REVIEW_UPSTREAM_SKILL_NAME" "${CODE_REVIEW_REPO}@${CODE_REVIEW_BRANCH}")"; then
+    exit 1
+  fi
+  CODE_REVIEW_SOURCE_DIR="$source_dir"
+}
+
+install_remote_code_review_skill() {
+  local target_dir="$1"
+  local source_dir
+  local target_skill_dir="${target_dir}/${CODE_REVIEW_SKILL_NAME}"
+
+  prepare_code_review_skill_source
+  source_dir="$CODE_REVIEW_SOURCE_DIR"
+  echo "→ ${CODE_REVIEW_SKILL_NAME} 설치 중: ${target_skill_dir}"
+  if [ "$CODE_REVIEW_SKILL_NAME" != "$CODE_REVIEW_UPSTREAM_SKILL_NAME" ]; then
+    rm -rf "${target_dir}/${CODE_REVIEW_UPSTREAM_SKILL_NAME}"
+  fi
+  replace_dir "$source_dir" "$target_skill_dir"
+  rewrite_skill_name "$target_skill_dir" "$CODE_REVIEW_SKILL_NAME"
+}
+
 # ===== 실행 =====
 
 echo "🚀 repo-bootstrap 설치 시작"
@@ -253,6 +327,7 @@ if [ "$INSTALL_CODEX" -eq 1 ]; then
   echo "📦 Codex 스킬 설치: ${CODEX_DIR}"
   install_codex_skills "$CODEX_DIR" "${SKILLS[@]}"
   install_codex_humanize_korean
+  install_remote_code_review_skill "$CODEX_DIR"
 fi
 
 if [ "$INSTALL_CLAUDE" -eq 1 ]; then
@@ -260,6 +335,7 @@ if [ "$INSTALL_CLAUDE" -eq 1 ]; then
   echo "📦 Claude 스킬 설치: ${CLAUDE_SKILLS_DIR}"
   install_claude_skills "$CLAUDE_SKILLS_DIR" "${CLAUDE_SKILLS[@]}"
   install_claude_humanize_korean
+  install_remote_code_review_skill "$CLAUDE_SKILLS_DIR"
 fi
 
 echo ""
@@ -273,6 +349,7 @@ if [ "$INSTALL_CLAUDE" -eq 1 ]; then
   echo "   현재 브랜치의 PR 제목과 설명 작성해줘"
   echo "   이 저장소에 맞는 Git 훅을 구성해줘"
   echo "   이 글 AI 티 안 나게 자연스럽게 다듬어줘"
+  echo "   /awesome-code-review 현재 변경사항을 코드 리뷰해줘"
 fi
 
 if [ "$INSTALL_CODEX" -eq 1 ]; then
@@ -283,4 +360,5 @@ if [ "$INSTALL_CODEX" -eq 1 ]; then
   echo "   현재 브랜치의 PR 제목과 설명 작성해줘"
   echo "   이 저장소에 맞는 Git 훅을 구성해줘"
   echo "   이 글 AI 티 안 나게 자연스럽게 다듬어줘"
+  echo "   /awesome-code-review 현재 변경사항을 코드 리뷰해줘"
 fi
