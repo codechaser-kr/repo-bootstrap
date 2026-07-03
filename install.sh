@@ -20,10 +20,11 @@ CODE_REVIEW_UPSTREAM_SKILL_NAME="code-review-skill"
 CODE_REVIEW_SKILL_NAME="awesome-code-review"
 
 CODEX_DIR="${HOME}/.codex/skills"
-CLAUDE_SKILLS_DIR="${HOME}/.claude/skills"
-CLAUDE_AGENTS_DIR="${HOME}/.claude/agents"
-CLAUDE_COMMANDS_DIR="${HOME}/.claude/commands"
-CLAUDE_MANIFEST="${HOME}/.claude/.repo-bootstrap-humanize-files"
+CLAUDE_DIR="${CLAUDE_CONFIG_DIR:-${HOME}/.claude}"
+CLAUDE_SKILLS_DIR="${CLAUDE_DIR}/skills"
+CLAUDE_AGENTS_DIR="${CLAUDE_DIR}/agents"
+CLAUDE_COMMANDS_DIR="${CLAUDE_DIR}/commands"
+CLAUDE_MANIFEST="${CLAUDE_DIR}/.repo-bootstrap-humanize-files"
 
 INSTALL_CODEX=1
 INSTALL_CLAUDE=1
@@ -205,7 +206,7 @@ remove_manifest_entries() {
 
   while IFS= read -r relative_path; do
     if [ -n "$relative_path" ]; then
-      rm -f "${HOME}/.claude/${relative_path}"
+      rm -f "${CLAUDE_DIR}/${relative_path}"
     fi
   done < "$CLAUDE_MANIFEST"
 }

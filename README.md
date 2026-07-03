@@ -72,9 +72,10 @@ curl -fsSL https://raw.githubusercontent.com/codechaser-kr/repo-bootstrap/main/i
 **설치 위치:**
 
 - Codex skills: `~/.codex/skills/<skill>/SKILL.md`
-- Claude skills: `~/.claude/skills/<skill>/SKILL.md`
-- Claude agents: `~/.claude/agents/*.md`
-- Claude commands: `~/.claude/commands/*.md`
+- Claude config dir: `${CLAUDE_CONFIG_DIR}` 값이 있으면 그 경로, 없으면 `~/.claude`
+- Claude skills: `<Claude config dir>/skills/<skill>/SKILL.md`
+- Claude agents: `<Claude config dir>/agents/*.md`
+- Claude commands: `<Claude config dir>/commands/*.md`
 
 **필요 명령:**
 
