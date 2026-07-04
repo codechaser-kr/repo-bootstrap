@@ -147,6 +147,7 @@ rewrite_skill_name() {
 
   if ! awk -v new_name="$new_name" '
     BEGIN { in_frontmatter = 0; renamed = 0 }
+    { sub(/\r$/, "") }
     NR == 1 && $0 == "---" { in_frontmatter = 1; print; next }
     in_frontmatter && renamed == 0 && $0 ~ /^name:[[:space:]]*/ {
       print "name: " new_name
