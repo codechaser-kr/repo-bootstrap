@@ -1,13 +1,14 @@
 #!/usr/bin/env bash
 set -e
 
-SKILLS=("branch" "commit" "pr" "git-hooks" "humanize-korean")
-CLAUDE_SKILLS=("branch" "commit" "pr" "git-hooks" "humanize-korean")
+SKILLS=("branch" "commit" "pr" "git-hooks" "humanize-korean" "awesome-code-review")
+CLAUDE_SKILLS=("branch" "commit" "pr" "git-hooks" "humanize-korean" "awesome-code-review")
 
 CODEX_DIR="${HOME}/.codex/skills"
-CLAUDE_SKILLS_DIR="${HOME}/.claude/skills"
-CLAUDE_MANIFEST="${HOME}/.claude/.repo-bootstrap-humanize-files"
-CLAUDE_LEGACY_MANIFEST="${HOME}/.claude/.git-workflow-kit-humanize-files"
+CLAUDE_DIR="${CLAUDE_CONFIG_DIR:-${HOME}/.claude}"
+CLAUDE_SKILLS_DIR="${CLAUDE_DIR}/skills"
+CLAUDE_MANIFEST="${CLAUDE_DIR}/.repo-bootstrap-humanize-files"
+CLAUDE_LEGACY_MANIFEST="${CLAUDE_DIR}/.git-workflow-kit-humanize-files"
 CLAUDE_HUMANIZE_FALLBACK_FILES=(
   "agents/ai-tell-detector.md"
   "agents/content-fidelity-auditor.md"
@@ -84,7 +85,7 @@ remove_claude_humanize_files() {
   if [ -f "$CLAUDE_MANIFEST" ]; then
     while IFS= read -r relative_path; do
       if [ -n "$relative_path" ]; then
-        local target="${HOME}/.claude/${relative_path}"
+        local target="${CLAUDE_DIR}/${relative_path}"
         if [ -f "$target" ]; then
           echo "🗑 제거 중: $target"
           rm -f "$target"
@@ -98,7 +99,7 @@ remove_claude_humanize_files() {
   if [ -f "$CLAUDE_LEGACY_MANIFEST" ]; then
     while IFS= read -r relative_path; do
       if [ -n "$relative_path" ]; then
-        local target="${HOME}/.claude/${relative_path}"
+        local target="${CLAUDE_DIR}/${relative_path}"
         if [ -f "$target" ]; then
           echo "🗑 제거 중: $target"
           rm -f "$target"
@@ -114,7 +115,7 @@ remove_claude_humanize_files() {
   fi
 
   for relative_path in "${CLAUDE_HUMANIZE_FALLBACK_FILES[@]}"; do
-    local target="${HOME}/.claude/${relative_path}"
+    local target="${CLAUDE_DIR}/${relative_path}"
     if [ -f "$target" ]; then
       echo "🗑 제거 중: $target"
       rm -f "$target"
