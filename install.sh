@@ -312,9 +312,6 @@ install_remote_code_review_skill() {
   prepare_code_review_skill_source
   source_dir="$CODE_REVIEW_SOURCE_DIR"
   echo "→ ${CODE_REVIEW_SKILL_NAME} 설치 중: ${target_skill_dir}"
-  if [ "$CODE_REVIEW_SKILL_NAME" != "$CODE_REVIEW_UPSTREAM_SKILL_NAME" ]; then
-    rm -rf "${target_dir}/${CODE_REVIEW_UPSTREAM_SKILL_NAME}"
-  fi
   replace_dir "$source_dir" "$target_skill_dir"
   rewrite_skill_name "$target_skill_dir" "$CODE_REVIEW_SKILL_NAME"
 }
