@@ -7,8 +7,8 @@ BRANCH="main"
 BASE_URL="https://raw.githubusercontent.com/${REPO}/${BRANCH}"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-SKILLS=("branch" "commit" "pr" "git-hooks")
-CLAUDE_SKILLS=("branch" "commit" "pr" "git-hooks")
+SKILLS=("branch" "commit" "pr-proposal" "git-hooks")
+CLAUDE_SKILLS=("branch" "commit" "pr-proposal" "git-hooks")
 
 CODEX_HUMANIZE_REPO="Squirbie/im-not-ai-codex"
 CODEX_HUMANIZE_BRANCH="main"
