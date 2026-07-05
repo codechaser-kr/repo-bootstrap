@@ -10,12 +10,12 @@ Codex와 Claude에서 공통으로 사용할 수 있는 저장소 초기 세팅�
 
 - branch: 현재 변경사항을 분석해 더 적절한 브랜치 이름 제안
 - commit: 변경사항을 분석해 Conventional Commits 형식의 커밋 메시지 제안
-- pr: 현재 브랜치 기준으로 PR 제목과 설명 제안
+- pr-proposal: 현재 브랜치 기준으로 PR 제목과 설명 제안
 - git-hooks: 기존 프로젝트 관리 도구와 개발 도구 구성을 확인한 뒤 Git 훅 구성
 - humanize-korean: AI가 쓴 한글 문장을 의미를 유지한 채 자연스럽게 윤문
 - awesome-code-review: PR/변경사항을 체계적으로 검토하고 아키텍처, 성능, 보안, 품질 관점의 리뷰 지원
 
-`branch`, `commit`, `pr`, `git-hooks`는 이 저장소의 스킬 파일을 설치합니다. `humanize-korean`과 `awesome-code-review`는 설치할 때마다 upstream `main`을 받아 최신 버전으로 설치합니다.
+`branch`, `commit`, `pr-proposal`, `git-hooks`는 이 저장소의 스킬 파일을 설치합니다. `humanize-korean`과 `awesome-code-review`는 설치할 때마다 upstream `main`을 받아 최신 버전으로 설치합니다.
 
 - Codex: `Squirbie/im-not-ai-codex`의 `skills/humanize-korean`
 - Claude: `epoko77-ai/im-not-ai`의 `.claude/skills/humanize-korean`, `.claude/agents`, `.claude/commands`
@@ -41,7 +41,7 @@ Codex와 Claude에서 공통으로 사용할 수 있는 저장소 초기 세팅�
 
 Codex와 Claude의 **글로벌 경로**에 맞춰 설치합니다. 설치 후에는 어느 저장소에서든 사용할 수 있습니다.
 
-저장소를 직접 clone한 뒤 `./install.sh`를 실행하면 `branch`, `commit`, `pr`, `git-hooks`는 현재 체크아웃된 로컬 파일을 기준으로 설치됩니다. 아래 `curl` 또는 `wget` 예시는 GitHub `main` 브랜치를 기준으로 설치합니다.
+저장소를 직접 clone한 뒤 `./install.sh`를 실행하면 `branch`, `commit`, `pr-proposal`, `git-hooks`는 현재 체크아웃된 로컬 파일을 기준으로 설치됩니다. 아래 `curl` 또는 `wget` 예시는 GitHub `main` 브랜치를 기준으로 설치합니다.
 
 `humanize-korean`과 `awesome-code-review`는 로컬 복사본을 쓰지 않습니다. 설치할 때 upstream GitHub tarball을 내려받으므로, 최신 원격 스킬이 필요하면 `install.sh`를 다시 실행하면 됩니다.
 

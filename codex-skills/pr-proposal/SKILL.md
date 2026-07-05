@@ -1,5 +1,5 @@
 ---
-name: pr
+name: pr-proposal
 description: 현재 브랜치의 GitHub Pull Request 제목과 설명을 생성합니다
 ---
 
