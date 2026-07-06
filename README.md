@@ -102,6 +102,12 @@ curl -fsSL https://raw.githubusercontent.com/codechaser-kr/repo-bootstrap/main/i
 - `tar`
 - Codex 설치 대상에서 `cc-plugin-codex`를 제외하지 않을 경우 Node.js 18+와 `npx`
 
+`cc-plugin-codex` 설치는 npm 네트워크와 Codex plugin 환경에 의존합니다. 이 단계가 실패해도 Codex/Claude 스킬 설치는 완료된 것으로 보고 스크립트는 계속 진행합니다. 실패한 경우 나중에 다음 명령으로 다시 시도할 수 있습니다:
+
+```bash
+npx --yes cc-plugin-codex install
+```
+
 ### GitHub 템플릿 및 AI 리뷰 설정 설치 (`setup-github.sh`)
 
 **저장소별로** `.github/ISSUE_TEMPLATE/`의 이슈 템플릿, `.github/pull_request_template.md`, `AGENTS.md`, `.gemini/styleguide.md`를 추가합니다. 템플릿과 AI 리뷰 설정을 적용할 저장소의 루트에서 실행하세요.
