@@ -3,6 +3,7 @@ set -e
 
 SKILLS=("branch" "commit" "pr-proposal" "git-hooks" "humanize-korean" "awesome-code-review")
 CLAUDE_SKILLS=("branch" "commit" "pr-proposal" "git-hooks" "humanize-korean" "awesome-code-review")
+CC_PLUGIN_PACKAGE="cc-plugin-codex"
 
 CODEX_DIR="${HOME}/.codex/skills"
 CLAUDE_DIR="${CLAUDE_CONFIG_DIR:-${HOME}/.claude}"
@@ -23,20 +24,49 @@ CLAUDE_HUMANIZE_FALLBACK_FILES=(
 
 REMOVE_CODEX=1
 REMOVE_CLAUDE=1
+REMOVE_CC_PLUGIN=0
+
+print_usage() {
+  echo "Usage: uninstall.sh [--codex-only] [--claude-only] [--with-cc-plugin]"
+  echo ""
+  echo "Options:"
+  echo "  --codex-only       Codex 스킬만 제거합니다."
+  echo "  --claude-only      Claude 스킬만 제거합니다."
+  echo "  --with-cc-plugin   cc-plugin-codex도 함께 제거합니다."
+}
 
 # ===== 옵션 처리 =====
 for arg in "$@"; do
   case $arg in
+    -h|--help)
+      print_usage
+      exit 0
+      ;;
     --codex-only)
       REMOVE_CLAUDE=0
       ;;
     --claude-only)
       REMOVE_CODEX=0
       ;;
+    --with-cc-plugin)
+      REMOVE_CC_PLUGIN=1
+      ;;
     *)
+      echo "❌ 알 수 없는 옵션: ${arg}"
+      print_usage
+      exit 1
       ;;
   esac
 done
+
+require_command() {
+  local name="$1"
+
+  if ! command -v "$name" >/dev/null 2>&1; then
+    echo "❌ ${name} 명령이 필요합니다."
+    exit 1
+  fi
+}
 
 remove_codex_skills() {
   local target_dir="$1"
@@ -123,6 +153,16 @@ remove_claude_humanize_files() {
   done
 }
 
+remove_codex_cc_plugin() {
+  if ! command -v npx >/dev/null 2>&1; then
+    echo "❌ npx 명령이 필요합니다."
+    return 1
+  fi
+
+  echo "🗑 cc-plugin-codex 제거 중: npx --yes ${CC_PLUGIN_PACKAGE} uninstall"
+  npx --yes "$CC_PLUGIN_PACKAGE" uninstall
+}
+
 echo "🧹 repo-bootstrap 제거 시작"
 
 if [ "$REMOVE_CODEX" -eq 1 ]; then
@@ -136,6 +176,21 @@ if [ "$REMOVE_CLAUDE" -eq 1 ]; then
   echo "📦 Claude 스킬 제거: ${CLAUDE_SKILLS_DIR}"
   remove_claude_skills "$CLAUDE_SKILLS_DIR" "${CLAUDE_SKILLS[@]}"
   remove_claude_humanize_files
+fi
+
+if [ "$REMOVE_CC_PLUGIN" -eq 1 ]; then
+  if [ "$REMOVE_CODEX" -eq 1 ]; then
+    echo ""
+    echo "📦 Codex 플러그인 제거: cc-plugin-codex"
+    if ! remove_codex_cc_plugin; then
+      echo ""
+      echo "⚠️  cc-plugin-codex 제거에 실패했습니다."
+      echo "   나중에 직접 제거 시도: npx --yes ${CC_PLUGIN_PACKAGE} uninstall"
+    fi
+  else
+    echo ""
+    echo "⚠️  --claude-only가 지정되어 cc-plugin-codex 제거를 건너뜁니다."
+  fi
 fi
 
 echo ""

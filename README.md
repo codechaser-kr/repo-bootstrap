@@ -2,7 +2,7 @@
 
 Codex와 Claude에서 공통으로 사용할 수 있는 저장소 초기 세팅용 로컬 툴킷입니다.
 
-브랜치명, 커밋 메시지, PR 설명처럼 반복해서 작성하는 Git 작업을 빠르게 처리할 수 있도록 Codex skills, Claude skills, GitHub 협업용 이슈/PR 템플릿과 AI 리뷰 설정을 제공합니다. AI가 쓴 듯한 한글 문장을 자연스럽게 다듬는 `humanize-korean` 스킬과 코드 리뷰를 돕는 `awesome-code-review` 스킬도 Codex와 Claude 글로벌 경로에 설치할 수 있습니다.
+브랜치명, 커밋 메시지, PR 설명처럼 반복해서 작성하는 Git 작업을 빠르게 처리할 수 있도록 Codex skills, Claude skills, GitHub 협업용 이슈/PR 템플릿과 AI 리뷰 설정을 제공합니다. AI가 쓴 듯한 한글 문장을 자연스럽게 다듬는 `humanize-korean` 스킬과 코드 리뷰를 돕는 `awesome-code-review` 스킬도 Codex와 Claude 글로벌 경로에 설치할 수 있습니다. 원하면 Codex에서 Claude Code 작업을 호출하는 `cc-plugin-codex` 플러그인도 함께 관리할 수 있습니다.
 
 ## 포함 내용
 
@@ -22,6 +22,12 @@ Codex와 Claude에서 공통으로 사용할 수 있는 저장소 초기 세팅�
 - Codex/Claude: `awesome-skills/code-review-skill`의 repo 루트 스킬을 `awesome-code-review` 이름으로 설치
 
 `awesome-skills/code-review-skill` upstream은 README에서 Claude Code 설치만 안내하지만, 스킬 본문은 `SKILL.md`와 상대 경로 reference/assets/scripts로 구성되어 있어 이 설치 스크립트에서는 같은 원본을 Codex와 Claude 양쪽에 설치합니다. 설치 시 디렉터리명과 `SKILL.md`의 `name`을 `awesome-code-review`로 변경하므로 Claude에서는 `/awesome-code-review`로 명시 호출할 수 있습니다. Claude 전용 메타데이터(`allowed-tools`)는 Codex 스킬 동작을 위한 권한 설정으로 해석하지 않습니다.
+
+### Codex 플러그인
+
+- cc-plugin-codex: Codex 안에서 `$cc:review`, `$cc:rescue` 등 Claude Code 기반 작업 실행
+
+`cc-plugin-codex`는 일반 Codex skill 복사가 아니라 Codex native plugin 설치입니다. Codex 설치 대상일 때 기본으로 `npx --yes cc-plugin-codex install`을 실행하며, 플러그인은 Codex marketplace/cache 경로에 설치됩니다. 이 과정에서 upstream installer가 `~/.codex/config.toml`의 hook 관련 feature gate를 활성화할 수 있습니다.
 
 ### GitHub 협업 설정
 
@@ -43,7 +49,7 @@ Codex와 Claude의 **글로벌 경로**에 맞춰 설치합니다. 설치 후에
 
 저장소를 직접 clone한 뒤 `./install.sh`를 실행하면 `branch`, `commit`, `pr-proposal`, `git-hooks`는 현재 체크아웃된 로컬 파일을 기준으로 설치됩니다. 아래 `curl` 또는 `wget` 예시는 GitHub `main` 브랜치를 기준으로 설치합니다.
 
-`humanize-korean`과 `awesome-code-review`는 로컬 복사본을 쓰지 않습니다. 설치할 때 upstream GitHub tarball을 내려받으므로, 최신 원격 스킬이 필요하면 `install.sh`를 다시 실행하면 됩니다.
+`humanize-korean`과 `awesome-code-review`는 로컬 복사본을 쓰지 않습니다. 설치할 때 upstream GitHub tarball을 내려받으므로, 최신 원격 스킬이 필요하면 `install.sh`를 다시 실행하면 됩니다. Codex 설치 대상이면 `cc-plugin-codex`도 기본으로 설치하거나 갱신합니다.
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/codechaser-kr/repo-bootstrap/main/install.sh | bash
@@ -57,21 +63,42 @@ wget -qO- https://raw.githubusercontent.com/codechaser-kr/repo-bootstrap/main/in
 
 **설치 옵션:**
 
-Codex만 설치:
+Codex와 `cc-plugin-codex`만 설치:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/codechaser-kr/repo-bootstrap/main/install.sh | bash -s -- --codex-only
 ```
 
-Claude만 설치:
+Claude만 설치하고 `cc-plugin-codex`는 설치하지 않음:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/codechaser-kr/repo-bootstrap/main/install.sh | bash -s -- --claude-only
 ```
 
+`cc-plugin-codex` 설치를 명시:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/codechaser-kr/repo-bootstrap/main/install.sh | bash -s -- --with-cc-plugin
+```
+
+`--with-cc-plugin`은 Codex 설치 대상에서 기본값입니다. 설치 의도를 명확히 하거나 `--without-cc-plugin` 뒤에 다시 켤 때 사용할 수 있습니다.
+
+Codex/Claude 스킬만 설치하고 `cc-plugin-codex`는 제외:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/codechaser-kr/repo-bootstrap/main/install.sh | bash -s -- --without-cc-plugin
+```
+
+Codex 스킬만 설치하고 `cc-plugin-codex`는 제외:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/codechaser-kr/repo-bootstrap/main/install.sh | bash -s -- --codex-only --without-cc-plugin
+```
+
 **설치 위치:**
 
 - Codex skills: `~/.codex/skills/<skill>/SKILL.md`
+- Codex plugin: Codex marketplace/cache 경로
 - Claude config dir: `${CLAUDE_CONFIG_DIR}` 값이 있으면 그 경로, 없으면 `~/.claude`
 - Claude skills: `<Claude config dir>/skills/<skill>/SKILL.md`
 - Claude agents: `<Claude config dir>/agents/*.md`
@@ -81,6 +108,13 @@ curl -fsSL https://raw.githubusercontent.com/codechaser-kr/repo-bootstrap/main/i
 
 - `curl` 또는 `wget`
 - `tar`
+- Codex 설치 대상에서 `cc-plugin-codex`를 제외하지 않을 경우 Node.js 18+와 `npx`
+
+`cc-plugin-codex` 설치는 npm 네트워크와 Codex plugin 환경에 의존합니다. 이 단계가 실패해도 Codex/Claude 스킬 설치는 완료된 것으로 보고 스크립트는 계속 진행합니다. 실패한 경우 나중에 다음 명령으로 다시 시도할 수 있습니다:
+
+```bash
+npx --yes cc-plugin-codex install
+```
 
 ### GitHub 템플릿 및 AI 리뷰 설정 설치 (`setup-github.sh`)
 
@@ -128,9 +162,24 @@ Codex에서는 skills 목록에서 사용할 수 있습니다. 예를 들어 다
 /awesome-code-review 현재 변경사항을 코드 리뷰해줘
 ```
 
+`cc-plugin-codex`를 설치했다면 Codex를 다시 시작한 뒤 한 번 확인합니다:
+
+```text
+$cc:setup
+```
+
+이후 다음 명령을 사용할 수 있습니다:
+
+```text
+$cc:review --background
+$cc:status
+$cc:result
+$cc:rescue investigate why the tests started failing
+```
+
 ## 제거
 
-전체 제거:
+전체 제거. 기본 제거는 `cc-plugin-codex`를 제거하지 않습니다:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/codechaser-kr/repo-bootstrap/main/uninstall.sh | bash
@@ -148,7 +197,23 @@ Claude만 제거:
 curl -fsSL https://raw.githubusercontent.com/codechaser-kr/repo-bootstrap/main/uninstall.sh | bash -s -- --claude-only
 ```
 
+`cc-plugin-codex`도 함께 제거:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/codechaser-kr/repo-bootstrap/main/uninstall.sh | bash -s -- --with-cc-plugin
+```
+
+Codex 스킬과 `cc-plugin-codex`만 제거:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/codechaser-kr/repo-bootstrap/main/uninstall.sh | bash -s -- --codex-only --with-cc-plugin
+```
+
 Claude 제거 시 `humanize-korean` 설치 과정에서 함께 설치한 agents/commands도 manifest를 기준으로 제거합니다.
+
+`cc-plugin-codex` 제거는 명시적으로 `--with-cc-plugin`을 지정했을 때만 실행합니다. upstream 제거 명령은 플러그인 캐시를 지우고 `~/.codex/config.toml`의 `cc` 플러그인 전용 설정 섹션을 정리할 수 있지만, install 때 켠 `[features].hooks`와 `[features].plugin_hooks`를 되돌리지는 않습니다.
+
+완전 정리가 필요하면 다른 Codex 플러그인이 hook 기능을 쓰지 않는지 확인한 뒤 `~/.codex/config.toml`의 `[features].hooks`와 `[features].plugin_hooks` 값을 직접 검토하세요.
 
 ## 주의사항
 
