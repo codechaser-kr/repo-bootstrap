@@ -75,6 +75,14 @@ Claude만 설치하고 `cc-plugin-codex`는 설치하지 않음:
 curl -fsSL https://raw.githubusercontent.com/codechaser-kr/repo-bootstrap/main/install.sh | bash -s -- --claude-only
 ```
 
+`cc-plugin-codex` 설치를 명시:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/codechaser-kr/repo-bootstrap/main/install.sh | bash -s -- --with-cc-plugin
+```
+
+`--with-cc-plugin`은 Codex 설치 대상에서 기본값입니다. 설치 의도를 명확히 하거나 `--without-cc-plugin` 뒤에 다시 켤 때 사용할 수 있습니다.
+
 Codex/Claude 스킬만 설치하고 `cc-plugin-codex`는 제외:
 
 ```bash
@@ -204,6 +212,8 @@ curl -fsSL https://raw.githubusercontent.com/codechaser-kr/repo-bootstrap/main/u
 Claude 제거 시 `humanize-korean` 설치 과정에서 함께 설치한 agents/commands도 manifest를 기준으로 제거합니다.
 
 `cc-plugin-codex` 제거는 명시적으로 `--with-cc-plugin`을 지정했을 때만 실행합니다. upstream 제거 명령은 플러그인 캐시를 지우고 `~/.codex/config.toml`의 `cc` 플러그인 전용 설정 섹션을 정리할 수 있지만, install 때 켠 `[features].hooks`와 `[features].plugin_hooks`를 되돌리지는 않습니다.
+
+완전 정리가 필요하면 다른 Codex 플러그인이 hook 기능을 쓰지 않는지 확인한 뒤 `~/.codex/config.toml`의 `[features].hooks`와 `[features].plugin_hooks` 값을 직접 검토하세요.
 
 ## 주의사항
 

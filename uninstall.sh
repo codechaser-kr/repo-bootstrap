@@ -26,9 +26,22 @@ REMOVE_CODEX=1
 REMOVE_CLAUDE=1
 REMOVE_CC_PLUGIN=0
 
+print_usage() {
+  echo "Usage: uninstall.sh [--codex-only] [--claude-only] [--with-cc-plugin]"
+  echo ""
+  echo "Options:"
+  echo "  --codex-only       Codex 스킬만 제거합니다."
+  echo "  --claude-only      Claude 스킬만 제거합니다."
+  echo "  --with-cc-plugin   cc-plugin-codex도 함께 제거합니다."
+}
+
 # ===== 옵션 처리 =====
 for arg in "$@"; do
   case $arg in
+    -h|--help)
+      print_usage
+      exit 0
+      ;;
     --codex-only)
       REMOVE_CLAUDE=0
       ;;
@@ -39,6 +52,9 @@ for arg in "$@"; do
       REMOVE_CC_PLUGIN=1
       ;;
     *)
+      echo "❌ 알 수 없는 옵션: ${arg}"
+      print_usage
+      exit 1
       ;;
   esac
 done
