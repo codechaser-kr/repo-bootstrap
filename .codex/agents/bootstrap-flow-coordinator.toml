@@ -1,5 +1,5 @@
 name = "bootstrap-flow-coordinator"
-description = "repo-bootstrap 하네스 역할 흐름을 조율하고 설치/템플릿/QA/운영 감사(audit) handoff를 정렬한다."
+description = "repo-bootstrap 하네스 역할 흐름을 조율하고 설치/템플릿/QA/운영 감사(audit) 인수인계(handoff)를 정렬한다."
 model = "default"
 model_reasoning_effort = "high"
 sandbox_mode = "workspace-write"

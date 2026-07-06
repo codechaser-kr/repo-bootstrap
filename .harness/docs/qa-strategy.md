@@ -21,7 +21,7 @@
 ## 수동 검증
 
 - 실제 `npx --yes cc-plugin-codex install`과 `uninstall`은 사용자 전역 설정 변경 위험 때문에 필요 시 별도 승인 후 수행한다.
-- `setup-github.sh`는 임시 Git 저장소에서 기존 `AGENTS.md`와 `.gemini/styleguide.md` 섹션이 보존/upsert되는지 확인한다.
+- `setup-github.sh`는 임시 Git 저장소에서 기존 `AGENTS.md`와 `.gemini/styleguide.md` 섹션이 보존 또는 삽입/갱신(upsert)되는지 확인한다.
 - README 예시가 현재 기본 정책과 맞는지 사람이 확인한다.
 
 ## 미실행 항목
@@ -43,4 +43,4 @@
 ## 학습 후보
 
 - 설치 스크립트 하네스에서는 외부 네트워크 실패를 fatal/non-fatal로 나누는 정책을 역할 스펙에 유지한다.
-- README/옵션 파서 drift는 반복될 수 있으므로 QA 체크리스트에서 계속 확인한다.
+- README/옵션 파서 괴리(drift)는 반복될 수 있으므로 QA 체크리스트에서 계속 확인한다.

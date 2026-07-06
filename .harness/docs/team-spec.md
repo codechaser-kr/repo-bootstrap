@@ -6,7 +6,7 @@
 - 상태 모드: `신규 구축에 가까운 기존 확장`
 - 실행 모드: 주 에이전트 중심 실행
 - 실행 패턴: 파이프라인 + 생성-검증
-- 팀 설계 이유: 이 저장소의 실패 비용은 코드 실행보다 설치 경계, 전역 경로, 외부 네트워크, GitHub 템플릿 계약, README/스크립트 drift에서 발생한다. 역할 팀은 이 경계를 직접 드러내도록 설계한다.
+- 팀 설계 이유: 이 저장소의 실패 비용은 코드 실행보다 설치 경계, 전역 경로, 외부 네트워크, GitHub 템플릿 계약, README/스크립트 괴리(drift)에서 발생한다. 역할 팀은 이 경계를 직접 드러내도록 설계한다.
 
 ## 도메인 근거 요약
 
@@ -40,7 +40,7 @@
 - 중심 조율 역할은 `bootstrap-flow-coordinator`가 맡는다.
 - 구현성 변경은 `installer-boundary-maintainer` 또는 `workflow-template-curator` 중 변경 표면에 따라 분기한다.
 - 품질 확인은 `bootstrap-release-qa`가 맡고, 하네스 자체 정합성은 `harness-operations-auditor`가 최종 판정한다.
-- 역할 자산은 이 문서를 단일 원천으로 삼고, `.codex/agents/*`와 `.agents/skills/*`에는 역할별 세부 절차를 복제하지 않는다.
+- 역할 자산의 단일 원천은 이 문서이며, `.codex/agents/*`와 `.agents/skills/*`에는 역할별 세부 절차를 복제하지 않는다.
 
 ## 역할 스펙 초안
 
@@ -94,7 +94,7 @@
 - 금지 판단/피해야 할 오해: README만 보고 실제 스크립트 동작을 추정하지 않는다.
 - 출력 규칙: 저장소 근거와 추정/보류를 분리한다.
 - 산출 형식 기준: 표면, 경계, 실패 비용, 보류 질문을 포함한다.
-- 학습 후보 기록 규칙: 반복 리뷰 피드백으로 나온 drift를 최신 요약에 남긴다.
+- 학습 후보 기록 규칙: 반복 리뷰 피드백으로 나온 괴리(drift)를 최신 요약에 남긴다.
 - 승격 대상 기준: 설치 경계 판단이 반복되면 `qa-strategy.md` 또는 `team-spec.md` 보강 후보로 남긴다.
 - 생성기 환류 후보 기준: 여러 bootstrap 저장소에서 반복될 때만 후보로 남긴다.
 - 재진입 트리거: 새 설치 대상, 새 외부 upstream, 템플릿 계약 변경
@@ -114,7 +114,7 @@
 - 역할 표시 이름: `bootstrap-flow-coordinator`
 - 역할 유형: 중심 조율
 - 역할 목적: 분석, 구현, QA, 운영 감사(audit)를 연결하고 보류/실패/재진입 흐름을 유지한다.
-- 역할 책임: 요청 라우팅, handoff 기준, 오케스트레이션 문서, 세션 종료 기준 정렬
+- 역할 책임: 요청 라우팅, 인수인계(handoff) 기준, 오케스트레이션 문서, 세션 종료 기준 정렬
 - 주요 입력: `team-spec.md`, `domain-analysis.md`, `qa-strategy.md`, `latest-session-summary.md`
 - 주요 출력: `orchestration-plan.md`, `team-playbook.md`, 최신 요약 갱신 후보
 - 다음 역할: 변경 표면에 따라 `installer_boundary_maintainer`, `workflow_template_curator`, `bootstrap_release_qa`
@@ -122,7 +122,7 @@
 - 우선 입력 문서: `.harness/docs/team-spec.md`, `.harness/docs/domain-analysis.md`, `.harness/docs/qa-strategy.md`, `.harness/logs/latest-session-summary.md`
 - 요청 유형별 하위 분기: 설치 경계, 템플릿 경계, 문서/README, 하네스 운영
 - 작업 시작 체크리스트: 최신 로그와 변경 파일을 읽고 다음 역할을 하나로 좁힌다.
-- 주요 판단 기준: 역할 간 산출물 handoff가 파일 경로로 설명되어야 한다.
+- 주요 판단 기준: 역할 간 산출물 인수인계(handoff)가 파일 경로로 설명되어야 한다.
 - 금지 판단/피해야 할 오해: 조율 역할이 구현 세부를 대신하지 않는다.
 - 출력 규칙: 정상/보류/실패/재진입 흐름을 모두 남긴다.
 - 산출 형식 기준: from/to, inputs, output, status, reentry, learning을 포함한다.
@@ -135,7 +135,7 @@
 - 검증/리뷰 초점: 시작 진입과 중심 조율 책임이 섞이지 않았는가
 - agent 파일명: `bootstrap-flow-coordinator`
 - skill 디렉터리명: `bootstrap-flow-coordinator`
-- description 초안: repo-bootstrap 하네스 역할 흐름을 조율하고 설치/템플릿/QA/운영 감사(audit) handoff를 정렬한다.
+- description 초안: repo-bootstrap 하네스 역할 흐름을 조율하고 설치/템플릿/QA/운영 감사(audit) 인수인계(handoff)를 정렬한다.
 - 권장 모델 클래스: default
 - reasoning 기본값: high
 - sandbox 정책: workspace-write
@@ -178,7 +178,7 @@
 - 역할 표시 이름: `workflow-template-curator`
 - 역할 유형: 템플릿/정책 유지보수
 - 역할 목적: GitHub 이슈/PR 템플릿, `AGENTS.md`, `.gemini/styleguide.md`, `setup-github.sh` 계약을 유지한다.
-- 역할 책임: 템플릿 정합성, AI 리뷰 지침 보존, 설치 시 기존 파일 섹션 upsert 안전성
+- 역할 책임: 템플릿 정합성, AI 리뷰 지침 보존, 설치 시 기존 파일 섹션 삽입/갱신(upsert) 안전성
 - 주요 입력: `.github/ISSUE_TEMPLATE/*`, `.github/pull_request_template.md`, `.github/apps/*`, `setup-github.sh`, `AGENTS.md`
 - 주요 출력: 템플릿 변경, 설치 스크립트 변경, 계약 검토 메모
 - 다음 역할: `bootstrap_release_qa`
@@ -186,11 +186,11 @@
 - 우선 입력 문서: `.github/ISSUE_TEMPLATE/*`, `.github/pull_request_template.md`, `.github/apps/codex-code-review.md`, `.github/apps/gemini-code-review.md`, `setup-github.sh`
 - 요청 유형별 하위 분기: 기능제안/기능변경/기능결함/정책검토, PR 연결 규칙, AI 리뷰 스타일
 - 작업 시작 체크리스트: title prefix, labels, 필수 섹션, `Refs #번호`, 자동 close 키워드 미사용 확인
-- 주요 판단 기준: 대상 저장소 기존 문서 전체 덮어쓰기보다 관리 섹션 upsert를 우선한다.
+- 주요 판단 기준: 대상 저장소 기존 문서 전체 덮어쓰기보다 관리 섹션 삽입/갱신(upsert)을 우선한다.
 - 금지 판단/피해야 할 오해: GitHub Workflow Engine 계약과 단순 Markdown 취향을 혼동하지 않는다.
 - 출력 규칙: 계약 변경과 문구 정리를 분리한다.
 - 산출 형식 기준: 변경 템플릿, 영향받는 Workflow Engine 규칙, 검증 기준을 남긴다.
-- 학습 후보 기록 규칙: 템플릿/Workflow Engine drift를 최신 요약에 남긴다.
+- 학습 후보 기록 규칙: 템플릿/Workflow Engine 괴리(drift)를 최신 요약에 남긴다.
 - 승격 대상 기준: 계약 불일치가 반복되면 `team-spec.md`와 `qa-strategy.md` 보강 후보로 남긴다.
 - 생성기 환류 후보 기준: 여러 저장소 템플릿에서 반복되는 계약 결함일 때 후보로 남긴다.
 - 재진입 트리거: 이슈 유형 추가, PR 연결 규칙 변경, AI 리뷰 지침 변경
@@ -225,7 +225,7 @@
 - 학습 후보 기록 규칙: 반복 검증 공백은 최신 요약과 `qa-strategy.md`에 남긴다.
 - 승격 대상 기준: 반복되는 QA 누락은 하네스 Phase 4 또는 5 재진입 후보로 남긴다.
 - 생성기 환류 후보 기준: 여러 타겟에서 같은 QA 공백이 반복될 때 후보로 남긴다.
-- 재진입 트리거: 검증 기준 누락, README/스크립트 drift, 전역 설정 위험 미문서화
+- 재진입 트리거: 검증 기준 누락, README/스크립트 괴리(drift), 전역 설정 위험 미문서화
 - 종료 판정 기준: 실행한 검증과 남은 위험이 PR 판단에 충분하다.
 - 완료 기준: 변경 범위에 맞는 자동/수동 검증이 정리된다.
 - 검증/리뷰 초점: 공급망, 전역 설정, 삭제 안전성, 템플릿 계약
@@ -294,7 +294,7 @@
 role_id|display_name|agent_file|model|reasoning|sandbox|description
 run_harness|run-harness|run-harness|default|medium|workspace-write|현재 repo-bootstrap 하네스 상태를 읽고 시작 역할과 필요한 하네스 재진입 Phase를 안내한다.
 bootstrap_surface_analyst|bootstrap-surface-analyst|bootstrap-surface-analyst|default|medium|workspace-write|repo-bootstrap의 설치 스크립트, GitHub 템플릿, AI 리뷰 지침 표면을 분석해 변경 경계와 실패 비용을 정리한다.
-bootstrap_flow_coordinator|bootstrap-flow-coordinator|bootstrap-flow-coordinator|default|high|workspace-write|repo-bootstrap 하네스 역할 흐름을 조율하고 설치/템플릿/QA/운영 감사(audit) handoff를 정렬한다.
+bootstrap_flow_coordinator|bootstrap-flow-coordinator|bootstrap-flow-coordinator|default|high|workspace-write|repo-bootstrap 하네스 역할 흐름을 조율하고 설치/템플릿/QA/운영 감사(audit) 인수인계(handoff)를 정렬한다.
 installer_boundary_maintainer|installer-boundary-maintainer|installer-boundary-maintainer|default|medium|workspace-write|repo-bootstrap 설치/제거 스크립트의 전역 경로, 외부 네트워크, 플러그인, 실패 처리 경계를 구현하고 문서와 맞춘다.
 workflow_template_curator|workflow-template-curator|workflow-template-curator|default|medium|workspace-write|repo-bootstrap GitHub 이슈/PR 템플릿과 AI 리뷰 지침 설치 계약을 관리하고 Workflow Engine 정합성을 유지한다.
 bootstrap_release_qa|bootstrap-release-qa|bootstrap-release-qa|default|high|workspace-write|repo-bootstrap 설치/제거/템플릿 변경을 릴리즈 전 관점에서 검증하고 미실행 위험을 정리한다.

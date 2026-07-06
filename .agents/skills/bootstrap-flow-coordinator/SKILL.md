@@ -1,6 +1,6 @@
 ---
 name: bootstrap-flow-coordinator
-description: repo-bootstrap 하네스 역할 흐름을 조율하고 설치/템플릿/QA/운영 감사(audit) handoff를 정렬합니다. 다음 역할 판단, 재진입 Phase 결정, 오케스트레이션 갱신에 사용합니다.
+description: repo-bootstrap 하네스 역할 흐름을 조율하고 설치/템플릿/QA/운영 감사(audit) 인수인계(handoff)를 정렬합니다. 다음 역할 판단, 재진입 Phase 결정, 오케스트레이션 갱신에 사용합니다.
 ---
 
 # bootstrap-flow-coordinator

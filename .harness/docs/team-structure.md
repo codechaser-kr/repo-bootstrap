@@ -4,7 +4,7 @@
 
 - `run-harness`: 시작 진입과 재진입 판단
 - `bootstrap-surface-analyst`: 저장소 표면과 실패 비용 분석
-- `bootstrap-flow-coordinator`: 중심 조율과 handoff 관리
+- `bootstrap-flow-coordinator`: 중심 조율과 인수인계(handoff) 관리
 - `installer-boundary-maintainer`: 설치/제거 스크립트 경계 유지보수
 - `workflow-template-curator`: GitHub 템플릿과 AI 리뷰 지침 계약 유지보수
 - `bootstrap-release-qa`: 변경 검증과 릴리즈 위험 정리

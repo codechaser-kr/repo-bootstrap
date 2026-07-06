@@ -14,10 +14,10 @@
 - PR 리뷰 대응 후 검증: `bootstrap-release-qa`
 - 하네스 구조 불일치 점검: `harness-operations-auditor`
 
-## Handoff 규칙
+## 인수인계(handoff) 규칙
 
 ```text
-handoff:
+인수인계(handoff):
 - from: run-harness
 - to: bootstrap-surface-analyst 또는 bootstrap-flow-coordinator
 - inputs: AGENTS.md, .harness/docs/team-spec.md, .harness/logs/latest-session-summary.md
@@ -26,7 +26,7 @@ handoff:
 ```
 
 ```text
-handoff:
+인수인계(handoff):
 - from: bootstrap-surface-analyst
 - to: bootstrap-flow-coordinator
 - inputs: README.md, install.sh, uninstall.sh, setup-github.sh, .github/*
@@ -35,7 +35,7 @@ handoff:
 ```
 
 ```text
-handoff:
+인수인계(handoff):
 - from: bootstrap-flow-coordinator
 - to: installer-boundary-maintainer 또는 workflow-template-curator
 - inputs: .harness/docs/team-spec.md, .harness/docs/domain-analysis.md, 최신 변경 diff
@@ -44,7 +44,7 @@ handoff:
 ```
 
 ```text
-handoff:
+인수인계(handoff):
 - from: 변경 역할
 - to: bootstrap-release-qa
 - inputs: 변경 diff, README.md, 스크립트 또는 템플릿, .harness/docs/qa-strategy.md
@@ -53,7 +53,7 @@ handoff:
 ```
 
 ```text
-handoff:
+인수인계(handoff):
 - from: bootstrap-release-qa
 - to: harness-operations-auditor
 - inputs: team-spec, agent/skill 포인터, 오케스트레이션, 로그
