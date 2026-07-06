@@ -18,6 +18,7 @@ CODE_REVIEW_REPO="awesome-skills/code-review-skill"
 CODE_REVIEW_BRANCH="main"
 CODE_REVIEW_UPSTREAM_SKILL_NAME="code-review-skill"
 CODE_REVIEW_SKILL_NAME="awesome-code-review"
+CC_PLUGIN_PACKAGE="cc-plugin-codex"
 
 CODEX_DIR="${HOME}/.codex/skills"
 CLAUDE_DIR="${CLAUDE_CONFIG_DIR:-${HOME}/.claude}"
@@ -28,6 +29,7 @@ CLAUDE_MANIFEST="${CLAUDE_DIR}/.repo-bootstrap-humanize-files"
 
 INSTALL_CODEX=1
 INSTALL_CLAUDE=1
+INSTALL_CC_PLUGIN=1
 TMP_DIR=""
 FETCHED_REPO_DIR=""
 CODE_REVIEW_SOURCE_DIR=""
@@ -40,6 +42,12 @@ for arg in "$@"; do
       ;;
     --claude-only)
       INSTALL_CODEX=0
+      ;;
+    --with-cc-plugin)
+      INSTALL_CC_PLUGIN=1
+      ;;
+    --without-cc-plugin)
+      INSTALL_CC_PLUGIN=0
       ;;
     *)
       ;;
@@ -317,9 +325,20 @@ install_remote_code_review_skill() {
   rewrite_skill_name "$target_skill_dir" "$CODE_REVIEW_SKILL_NAME"
 }
 
+install_codex_cc_plugin() {
+  require_command npx
+
+  echo "→ cc-plugin-codex 설치 중: npx --yes ${CC_PLUGIN_PACKAGE} install"
+  npx --yes "$CC_PLUGIN_PACKAGE" install
+}
+
 # ===== 실행 =====
 
 echo "🚀 repo-bootstrap 설치 시작"
+
+if [ "$INSTALL_CC_PLUGIN" -eq 1 ] && [ "$INSTALL_CODEX" -eq 1 ]; then
+  require_command npx
+fi
 
 if [ "$INSTALL_CODEX" -eq 1 ]; then
   echo ""
@@ -335,6 +354,17 @@ if [ "$INSTALL_CLAUDE" -eq 1 ]; then
   install_claude_skills "$CLAUDE_SKILLS_DIR" "${CLAUDE_SKILLS[@]}"
   install_claude_humanize_korean
   install_remote_code_review_skill "$CLAUDE_SKILLS_DIR"
+fi
+
+if [ "$INSTALL_CC_PLUGIN" -eq 1 ]; then
+  if [ "$INSTALL_CODEX" -eq 1 ]; then
+    echo ""
+    echo "📦 Codex 플러그인 설치: cc-plugin-codex"
+    install_codex_cc_plugin
+  else
+    echo ""
+    echo "⚠️  --claude-only가 지정되어 cc-plugin-codex 설치를 건너뜁니다."
+  fi
 fi
 
 echo ""
@@ -360,4 +390,8 @@ if [ "$INSTALL_CODEX" -eq 1 ]; then
   echo "   이 저장소에 맞는 Git 훅을 구성해줘"
   echo "   이 글 AI 티 안 나게 자연스럽게 다듬어줘"
   echo "   /awesome-code-review 현재 변경사항을 코드 리뷰해줘"
+
+  if [ "$INSTALL_CC_PLUGIN" -eq 1 ]; then
+    echo "   \$cc:setup"
+  fi
 fi
