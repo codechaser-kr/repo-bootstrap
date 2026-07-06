@@ -154,7 +154,10 @@ remove_claude_humanize_files() {
 }
 
 remove_codex_cc_plugin() {
-  require_command npx
+  if ! command -v npx >/dev/null 2>&1; then
+    echo "❌ npx 명령이 필요합니다."
+    return 1
+  fi
 
   echo "🗑 cc-plugin-codex 제거 중: npx --yes ${CC_PLUGIN_PACKAGE} uninstall"
   npx --yes "$CC_PLUGIN_PACKAGE" uninstall
@@ -179,7 +182,11 @@ if [ "$REMOVE_CC_PLUGIN" -eq 1 ]; then
   if [ "$REMOVE_CODEX" -eq 1 ]; then
     echo ""
     echo "📦 Codex 플러그인 제거: cc-plugin-codex"
-    remove_codex_cc_plugin
+    if ! remove_codex_cc_plugin; then
+      echo ""
+      echo "⚠️  cc-plugin-codex 제거에 실패했습니다."
+      echo "   나중에 직접 제거 시도: npx --yes ${CC_PLUGIN_PACKAGE} uninstall"
+    fi
   else
     echo ""
     echo "⚠️  --claude-only가 지정되어 cc-plugin-codex 제거를 건너뜁니다."

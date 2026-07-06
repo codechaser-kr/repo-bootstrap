@@ -29,7 +29,7 @@ CLAUDE_MANIFEST="${CLAUDE_DIR}/.repo-bootstrap-humanize-files"
 
 INSTALL_CODEX=1
 INSTALL_CLAUDE=1
-INSTALL_CC_PLUGIN=1
+INSTALL_CC_PLUGIN=2
 CC_PLUGIN_INSTALLED=0
 CC_PLUGIN_INSTALL_FAILED=0
 TMP_DIR=""
@@ -72,6 +72,14 @@ for arg in "$@"; do
       ;;
   esac
 done
+
+if [ "$INSTALL_CC_PLUGIN" -eq 2 ]; then
+  if [ "$INSTALL_CODEX" -eq 1 ]; then
+    INSTALL_CC_PLUGIN=1
+  else
+    INSTALL_CC_PLUGIN=0
+  fi
+fi
 
 # ===== 유틸 =====
 download() {
