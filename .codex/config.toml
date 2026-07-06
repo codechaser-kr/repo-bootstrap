@@ -1,0 +1,20 @@
+[agents.run_harness]
+config_file = "agents/run-harness.toml"
+
+[agents.bootstrap_surface_analyst]
+config_file = "agents/bootstrap-surface-analyst.toml"
+
+[agents.bootstrap_flow_coordinator]
+config_file = "agents/bootstrap-flow-coordinator.toml"
+
+[agents.installer_boundary_maintainer]
+config_file = "agents/installer-boundary-maintainer.toml"
+
+[agents.workflow_template_curator]
+config_file = "agents/workflow-template-curator.toml"
+
+[agents.bootstrap_release_qa]
+config_file = "agents/bootstrap-release-qa.toml"
+
+[agents.harness_operations_auditor]
+config_file = "agents/harness-operations-auditor.toml"

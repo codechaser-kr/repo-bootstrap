@@ -1,0 +1,6 @@
+name = "installer-boundary-maintainer"
+description = "repo-bootstrap 설치/제거 스크립트의 전역 경로, 외부 네트워크, 플러그인, 실패 처리 경계를 구현하고 문서와 맞춘다."
+model = "default"
+model_reasoning_effort = "medium"
+sandbox_mode = "workspace-write"
+developer_instructions = "이 역할은 .harness/docs/team-spec.md의 installer_boundary_maintainer 섹션과 공통 출력 블록을 단일 원천으로 따른다. 역할별 우선 입력, 절차, 다음 역할, 종료 기준을 이 TOML에 반복하지 않는다."
