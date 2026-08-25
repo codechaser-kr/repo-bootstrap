@@ -1,0 +1,29 @@
+{
+  "dependencies": {
+    "commit": {
+      "available": true,
+      "checkedAt": "2026-08-25T00:30:55Z",
+      "evidence": "현재 세션에서 /home/codechaser/.agents/skills/commit/SKILL.md를 확인함"
+    }
+  },
+  "review": {
+    "defaultMode": "codex/awesome-code-review",
+    "modes": {
+      "claude/code-review": {
+        "available": false,
+        "checkedAt": "2026-08-25T00:30:55Z",
+        "evidence": "현재 세션의 사용 가능한 스킬 목록에서 Claude 코드 리뷰 실행 주체를 확인하지 못함"
+      },
+      "claude/awesome-code-review": {
+        "available": false,
+        "checkedAt": "2026-08-25T00:30:55Z",
+        "evidence": "현재 세션의 사용 가능한 스킬 목록에서 Claude 고급 코드 리뷰 실행 주체를 확인하지 못함"
+      },
+      "codex/awesome-code-review": {
+        "available": true,
+        "checkedAt": "2026-08-25T00:30:55Z",
+        "evidence": "현재 세션에서 /home/codechaser/.agents/skills/awesome-code-review/SKILL.md를 확인함"
+      }
+    }
+  }
+}
