@@ -18,7 +18,8 @@
 
 ## 품질 실패 비용이 큰 지점
 
-- 전역 경로(`~/.codex`, `~/.claude`)를 잘못 수정하거나 삭제하는 경우
+- 전역 경로(`~/.agents/skills`, `~/.claude`)를 잘못 수정하거나 삭제하는 경우
+- Codex 플러그인 설정 경로(`~/.codex/config.toml`)와 스킬 경로를 혼동하는 경우
 - `curl | bash` 기본 경로에서 외부 네트워크, npm 패키지, GitHub tarball을 예상보다 공격적으로 실행하는 경우
 - 템플릿 설치가 대상 저장소의 기존 `AGENTS.md`나 `.gemini/styleguide.md`를 과하게 덮어쓰는 경우
 - README의 설치/제거 정책과 실제 스크립트 옵션이 어긋나는 경우

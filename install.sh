@@ -20,7 +20,7 @@ CODE_REVIEW_UPSTREAM_SKILL_NAME="code-review-skill"
 CODE_REVIEW_SKILL_NAME="awesome-code-review"
 CC_PLUGIN_PACKAGE="cc-plugin-codex"
 
-CODEX_DIR="${HOME}/.codex/skills"
+CODEX_DIR="${HOME}/.agents/skills"
 CLAUDE_DIR="${CLAUDE_CONFIG_DIR:-${HOME}/.claude}"
 CLAUDE_SKILLS_DIR="${CLAUDE_DIR}/skills"
 CLAUDE_AGENTS_DIR="${CLAUDE_DIR}/agents"
