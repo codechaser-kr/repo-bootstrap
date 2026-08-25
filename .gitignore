@@ -1,2 +1,3 @@
 .harness/logs/
 .github-agentic-loop/logs/
+.github-agentic-loop/settings.json
