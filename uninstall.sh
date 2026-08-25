@@ -5,7 +5,7 @@ SKILLS=("branch" "commit" "pr-proposal" "git-hooks" "humanize-korean" "awesome-c
 CLAUDE_SKILLS=("branch" "commit" "pr-proposal" "git-hooks" "humanize-korean" "awesome-code-review")
 CC_PLUGIN_PACKAGE="cc-plugin-codex"
 
-CODEX_DIR="${HOME}/.codex/skills"
+CODEX_DIR="${HOME}/.agents/skills"
 CLAUDE_DIR="${CLAUDE_CONFIG_DIR:-${HOME}/.claude}"
 CLAUDE_SKILLS_DIR="${CLAUDE_DIR}/skills"
 CLAUDE_MANIFEST="${CLAUDE_DIR}/.repo-bootstrap-humanize-files"

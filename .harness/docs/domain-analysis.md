@@ -16,7 +16,7 @@
 ## 핵심 런타임 경계
 
 - 로컬 저장소 쓰기: 현재 checkout 안의 스크립트와 템플릿을 수정한다.
-- 사용자 홈 전역 쓰기: `install.sh`와 `uninstall.sh`는 `~/.codex`, `~/.claude`를 다룬다.
+- 사용자 홈 전역 쓰기: `install.sh`와 `uninstall.sh`는 Codex 스킬 경로 `~/.agents/skills`와 Claude 경로 `~/.claude`를 다룬다. `cc-plugin-codex` 설정은 `~/.codex/config.toml`을 사용한다.
 - 외부 네트워크: GitHub tarball, raw GitHub, npm `npx` 호출이 있다.
 - 대상 저장소 설치: `setup-github.sh`는 실행 위치의 `.github`, `AGENTS.md`, `.gemini`를 수정한다.
 

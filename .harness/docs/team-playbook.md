@@ -12,7 +12,7 @@
 - 시작 역할: `installer-boundary-maintainer`
 - 우선 확인: `install.sh`, `uninstall.sh`, `README.md`
 - 기본 검증: `bash -n install.sh`, `bash -n uninstall.sh`, `git diff --check`, 도움말 출력, unknown option 처리
-- 미실행 위험: 실제 `~/.codex`, `~/.claude`, npm, GitHub tarball 변경
+- 미실행 위험: 실제 `~/.agents/skills`, `~/.claude`, npm, GitHub tarball 변경
 
 ## GitHub 템플릿 변경 흐름
 

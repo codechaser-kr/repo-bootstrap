@@ -97,7 +97,7 @@ curl -fsSL https://raw.githubusercontent.com/codechaser-kr/repo-bootstrap/main/i
 
 **설치 위치:**
 
-- Codex skills: `~/.codex/skills/<skill>/SKILL.md`
+- Codex skills: `~/.agents/skills/<skill>/SKILL.md`
 - Codex plugin: Codex marketplace/cache 경로
 - Claude config dir: `${CLAUDE_CONFIG_DIR}` 값이 있으면 그 경로, 없으면 `~/.claude`
 - Claude skills: `<Claude config dir>/skills/<skill>/SKILL.md`
